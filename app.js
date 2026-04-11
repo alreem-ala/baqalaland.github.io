@@ -14,12 +14,12 @@
     ENDING: "ending",
   };
 
-  /** Small-caps section labels  same gold tint as Memory 02 */
+  /** Small-caps section labels ï¿½ same gold tint as Memory 02 */
   const SUBHEADING_COLOR = "rgba(255,215,0,0.5)";
   const EYEBROW_GOLD = "rgba(255,215,0,0.7)";
   const BAQLALAND_BLUE = "#00D1FF";
 
-  /** Local 22 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
+  /** Local 2ï¿½2 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
   const CLOUD_IMG =
     "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/5ee33b51e_image.png";
   const BALL_IMG =
@@ -831,7 +831,9 @@
         [wordmark]
       )
     );
-    const linesBox = h("div", "", { style: { maxWidth: "42rem", width: "100%", textAlign: "center", marginBottom: "3rem" } });
+    const linesBox = h("div", "", {
+      style: { maxWidth: "min(50rem, 100%)", width: "100%", textAlign: "center", marginBottom: "3rem", boxSizing: "border-box" },
+    });
     INTRO_LINES.forEach((line, i) => {
       const vis = phase2 > 0.2 + i * 0.15 ? 1 : 0;
       const ty = Math.max(0, 1 - (phase2 - 0.2 - i * 0.15) * 5) * 16;
