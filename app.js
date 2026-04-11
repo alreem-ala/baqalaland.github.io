@@ -8,24 +8,25 @@
     REMEMBER: "remember",
     MEMORIES: "memories",
     QUIZ: "quiz",
-    BUDGET: "budget",
+    BUDGET: "budget", 
     FLOOR: "floor",
     RECEIPT: "receipt",
     ENDING: "ending",
   };
 
-  /** Small-caps section labels ï¿½ same gold tint as Memory 02 */
+  /** Small-caps section labels  same gold tint as Memory 02 */
   const SUBHEADING_COLOR = "rgba(255,215,0,0.5)";
   const EYEBROW_GOLD = "rgba(255,215,0,0.7)";
   const BAQLALAND_BLUE = "#00D1FF";
 
-  /** Local 2ï¿½2 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
+  /** Local 22 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
   const CLOUD_IMG =
     "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/5ee33b51e_image.png";
   const BALL_IMG =
     "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/e994aa93e_image.png";
   const AWNING_IMG =
     "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/5e2b20ae4_Asset7.png";
+  /** Place your bag PNG at `assets/plastic-bag.png` (same folder as index.html). */
   const ENDING_BAG_IMG = "./assets/plastic-bag.png";
   const BASE = "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/";
 
@@ -92,17 +93,6 @@
   ];
 
   const MAX_BUDGET = 10;
-
-  const BUDGET_MESSAGES = [
-    { min: 0, max: 4 },
-    { min: 5, max: 6, headline: "Baqala Regular" },
-    { min: 7, max: 8, headline: "The Sharp One"},
-    { min: 9, max: 10, headline: "Baqala Legend", body: "You didn't just visit the baqala. You studied it. You lived it." },
-  ];
-
-  function budgetMessage(budget) {
-    return BUDGET_MESSAGES.find((m) => budget >= m.min && budget <= m.max) || BUDGET_MESSAGES[1];
-  }
 
   function applyBudgetFromQuizScores() {
     st.budget = Math.min(MAX_BUDGET, st.quizScores.reduce((a, b) => a + b, 0));
@@ -474,6 +464,7 @@
     spUid: 0,
     spTimer: null,
     spSpawn: null,
+    spResultAed: null,
     sqPhase: "intro",
     sqSeq: [],
     sqShow: -1,
@@ -561,6 +552,7 @@
       if (st.spSpawn) clearInterval(st.spSpawn);
       st.spTimer = null;
       st.spSpawn = null;
+      st.spResultAed = null;
       st.sqPhase = "intro";
       st.sqSeq = [];
       st.sqShow = -1;
@@ -1645,7 +1637,11 @@
         h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "1.5rem", color: "#fff", textAlign: "center", textTransform: "uppercase", marginBottom: "0.5rem" } }, [`${st.mgScore.correct}/5 correct`])
       );
       const msg =
-        st.mgScore.s === 3 ? "Baqala photographic memory." : st.mgScore.s === 2 ? "Not bad. You were paying attention." : "The snacks were a blur, weren't they.";
+        st.mgScore.s === 3
+          ? "Baqala photographic memory."
+          : st.mgScore.s === 2
+            ? "Not bad. You were paying attention."
+            : "Every shelf tells a story. Yours is still loading.";
       inner.appendChild(h("p", "font-body", { style: { fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", fontStyle: "italic", textAlign: "center" } }, [msg]));
       inner.appendChild(
         h("div", "font-heading", { style: { marginTop: "1rem", fontSize: "1.875rem", color: "#FFD700", fontWeight: 700, textAlign: "center" } }, [`+${st.mgScore.s} AED`])
@@ -1737,22 +1733,12 @@
                   st.spTimer = null;
                   clearInterval(st.spSpawn);
                   st.spSpawn = null;
-                  st.spPhase = "result";
-                  render();
                   const s = scoreSpeedRound();
                   if (s === 3) playFound();
                   else playLand();
-                  setTimeout(() => {
-                    st.quizScores.push(s);
-                    st.quizGameIndex += 1;
-                    if (st.quizGameIndex >= 3) {
-                      applyBudgetFromQuizScores();
-                      setPhase(PHASES.BUDGET);
-                    } else {
-                      st.sqPhase = "intro";
-                      render();
-                    }
-                  }, 2200);
+                  st.spPhase = "result";
+                  st.spResultAed = s;
+                  render();
                 }
               }, 1000);
               st.spSpawn = setInterval(() => {
@@ -1888,8 +1874,15 @@
         );
         wrap.appendChild(b);
       });
-    } else if (st.spPhase === "result") {
-      const s = scoreSpeedRound();
+    } else if (st.spPhase === "result" && st.spResultAed != null) {
+      const aed = st.spResultAed;
+      const hits = st.spHits;
+      const grabbedLine =
+        hits === 0
+          ? "No Areej taps this round."
+          : hits === 1
+            ? "You grabbed Areej once."
+            : `You grabbed Areej ${hits} times.`;
       const box = h("div", "", {
         style: {
           position: "absolute",
@@ -1900,22 +1893,55 @@
           justifyContent: "center",
           padding: "3.75rem 1.5rem 2rem",
           boxSizing: "border-box",
-          overflowY: "auto",
           zIndex: 10,
         },
       });
-      const emoji = s === 3 ? "\u{26A1}" : s === 2 ? "\u{1F4A7}" : "\u{1F422}";
-      box.appendChild(h("div", "", { style: { fontSize: "4rem", marginBottom: "1rem" } }, [emoji]));
       box.appendChild(
-        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "1.5rem", color: "#fff", textTransform: "uppercase", textAlign: "center", marginBottom: "0.5rem" } }, [`${st.spHits} Areej grabbed`])
-      );
-      const msg =
-        s === 3 ? "The fridge never stood a chance." : s === 2 ? "Decent reflexes. The baqala approves." : "You were distracted by the chips, weren't you.";
-      box.appendChild(
-        h("p", "font-body", { style: { fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", fontStyle: "italic", textAlign: "center", maxWidth: "22rem", margin: "0 0 0.5rem" } }, [msg])
+        h("p", "font-heading", { style: { fontSize: "10px", letterSpacing: "0.4em", color: SUBHEADING_COLOR, textTransform: "uppercase", marginBottom: "1rem" } }, ["Time's up"])
       );
       box.appendChild(
-        h("div", "font-heading", { style: { marginTop: "1rem", fontSize: "1.875rem", color: "#FFD700", fontWeight: 700, textAlign: "center" } }, [`+${s} AED`])
+        h("p", "font-body", { style: { fontSize: "0.9375rem", color: "rgba(255,255,255,0.65)", textAlign: "center", maxWidth: "22rem", margin: "0 0 1.5rem" } }, [grabbedLine])
+      );
+      box.appendChild(
+        h("p", "font-heading", { style: { fontSize: "0.75rem", letterSpacing: "0.2em", color: SUBHEADING_COLOR, textTransform: "uppercase", margin: "0 0 0.5rem" } }, ["Added to your budget"])
+      );
+      box.appendChild(
+        h("p", "font-heading", { style: { fontSize: "clamp(2.5rem, 10vw, 3.5rem)", fontWeight: 800, color: "#FFD700", margin: "0 0 2rem", textShadow: "0 0 28px rgba(255,215,0,0.35)" } }, [`+${aed} AED`])
+      );
+      box.appendChild(
+        h(
+          "button",
+          "font-heading",
+          {
+            style: {
+              padding: "1rem 2.5rem",
+              borderRadius: "9999px",
+              border: "none",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              fontSize: "0.875rem",
+              color: "#fff",
+              cursor: "pointer",
+              background: "linear-gradient(135deg, #00D1FF, #7B2FF2)",
+              boxShadow: "0 4px 24px rgba(0,209,255,0.3)",
+            },
+            onclick: () => {
+              st.quizScores.push(aed);
+              st.spResultAed = null;
+              st.spPhase = "intro";
+              st.quizGameIndex += 1;
+              if (st.quizGameIndex >= 3) {
+                applyBudgetFromQuizScores();
+                setPhase(PHASES.BUDGET);
+              } else {
+                st.sqPhase = "intro";
+                render();
+              }
+            },
+          },
+          ["Continue"]
+        )
       );
       wrap.appendChild(box);
     }
@@ -2143,7 +2169,6 @@
   }
 
   function renderBudget() {
-    const msg = budgetMessage(st.budget);
     if (!st.brStarted) {
       st.brStarted = true;
       st.brCount = 0;
@@ -2199,14 +2224,6 @@
       })
     );
     const box = h("div", "", { style: { position: "relative", zIndex: 10, textAlign: "center", maxWidth: "32rem" } });
-    box.appendChild(
-      h(
-        "p",
-        "font-heading",
-        { style: { fontSize: "0.75rem", letterSpacing: "0.4em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "2rem" } },
-        ["You answered. The baqala counted. Here is what you earned:"]
-      )
-    );
     const num = h("div", "font-heading", {
       id: "budget-num",
       style: {
@@ -2252,25 +2269,6 @@
       coins.appendChild(h("span", "font-heading", { style: { fontSize: "0.875rem", color: EYEBROW_GOLD, alignSelf: "center" } }, [`+${st.budget - MAX_BUDGET}`]));
     box.appendChild(coins);
     if (st.brDone) {
-      if (msg.headline || msg.body) {
-        const msgBox = h("div", "", { style: { marginBottom: "2.5rem" } });
-        if (msg.headline) {
-          msgBox.appendChild(
-            h(
-              "h2",
-              "font-heading",
-              { style: { fontSize: "clamp(1.125rem, 4vw, 1.5rem)", fontWeight: 700, color: EYEBROW_GOLD, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: msg.body ? "0.5rem" : 0 } },
-              [msg.headline]
-            )
-          );
-        }
-        if (msg.body) {
-          msgBox.appendChild(
-            h("p", "font-body", { style: { fontSize: "1rem", color: "hsl(var(--muted-foreground))", lineHeight: 1.6, fontStyle: "italic" } }, [`"${msg.body}"`])
-          );
-        }
-        box.appendChild(msgBox);
-      }
       box.appendChild(
         h(
           "button",
@@ -3034,7 +3032,7 @@
       bagStage.appendChild(
         h("img", "", {
           src: ENDING_BAG_IMG,
-          alt: "",
+          alt: "Plastic bag",
           draggable: false,
           style: {
             display: "block",
@@ -3179,25 +3177,6 @@
         else lines.appendChild(h("p", "font-body", { style: closingBodyStyle }, [line]));
       });
       box.appendChild(lines);
-      if (st.endChosen) {
-        const pill = h("div", "", {
-          style: {
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            marginBottom: "2.5rem",
-            padding: "0.75rem 1.25rem",
-            borderRadius: "9999px",
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.1)",
-          },
-        });
-        pill.appendChild(h("img", "", { src: st.endChosen.img, alt: st.endChosen.name, style: { width: "2rem", height: "2rem", objectFit: "contain" } }));
-        pill.appendChild(
-          h("span", "font-body", { style: { fontSize: "0.75rem", color: "rgba(255,255,255,0.45)", fontStyle: "italic" } }, [`You started with the ${st.endChosen.name}.`])
-        );
-        box.appendChild(pill);
-      }
       box.appendChild(
         h(
           "button",
