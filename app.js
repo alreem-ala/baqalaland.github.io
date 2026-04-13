@@ -1128,7 +1128,7 @@
         {
           onclick: () => setPhase(PHASES.QUIZ),
         },
-        ["I Remember"]
+        ["Yes, let's revisit them"]
       )
     );
     wrap.appendChild(center);
