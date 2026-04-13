@@ -1536,7 +1536,7 @@
       });
       const box = h("div", "", { style: { width: "100%", maxWidth: "28rem", textAlign: "center" } });
       box.appendChild(
-        h("p", "font-heading", { style: { fontSize: "10px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "1.5rem" } }, ["Now"])
+        h("p", "font-heading", { style: { fontSize: "10px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "1.5rem" } }, ["But first"])
       );
       box.appendChild(
         h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.75rem, 6vw, 2.25rem)", color: "#fff", marginBottom: "1rem", textTransform: "uppercase" } }, [
@@ -1736,7 +1736,7 @@
           ? "Baqala photographic memory."
           : st.mgScore.s === 2
             ? "Not bad. You were paying attention."
-            : "Every shelf tells a story. Yours is still loading.";
+            : "";
       inner.appendChild(h("p", "font-body", { style: { fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", fontStyle: "italic", textAlign: "center" } }, [msg]));
       inner.appendChild(
         h("div", "font-heading", { style: { marginTop: "1rem", fontSize: "1.875rem", color: "#FFD700", fontWeight: 700, textAlign: "center" } }, [`+${st.mgScore.s} AED`])
@@ -2369,7 +2369,7 @@
           "button",
           "font-heading btn-raspberry",
           {
-            onclick: () => setPhase(PHASES.FLOOR),
+            onclick: () => setPhase(PHASES.CURTAIN),
           },
           ["Enter the Baqala"]
         )
@@ -2726,32 +2726,6 @@
         ["Go to Fridge"]
       )
     );
-    topActions.appendChild(
-      h(
-        "button",
-        "font-heading",
-        {
-          style: {
-            padding: "0.45rem 0.8rem",
-            borderRadius: "9999px",
-            border: "none",
-            background: "linear-gradient(135deg,#FF2E63,#7B2FF2)",
-            color: "#fff",
-            fontSize: "0.65rem",
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            cursor: st.floorPick.length === 0 ? "not-allowed" : "pointer",
-            opacity: st.floorPick.length === 0 ? 0.45 : 1,
-          },
-          disabled: st.floorPick.length === 0,
-          onclick: () => {
-            st.picks = st.floorPick.slice();
-            setPhase(PHASES.RECEIPT);
-          },
-        },
-        ["Checkout"]
-      )
-    );
     remEl.appendChild(topActions);
     head.appendChild(remEl);
     wrap.appendChild(head);
@@ -2803,7 +2777,7 @@
       h("div", "", { style: { fontFamily: "monospace", fontSize: "10px", color: EYEBROW_GOLD, textAlign: "center", marginBottom: "0.25rem" } }, [`AED ${st.floorSpent.toFixed(2)}`])
     );
     row.appendChild(reg);
-    const pile = h("div", "", { style: { flex: 1, display: "flex", alignItems: "flex-end", minHeight: "72px", position: "relative" } });
+    const pile = h("div", "", { style: { flex: 1, display: "flex", alignItems: "flex-end", minHeight: "72px", position: "relative", gap: "6px", flexWrap: "wrap", alignContent: "flex-end" } });
     if (st.floorPick.length === 0) {
       pile.appendChild(h("p", "font-body", { style: { color: "rgba(255,255,255,0.25)", fontSize: "0.75rem", fontStyle: "italic" } }, ["Nothing on the counter yet..."]));
     } else {
@@ -2817,10 +2791,10 @@
             height: "52px",
             objectFit: "contain",
             filter: "brightness(1.05) drop-shadow(0 4px 8px rgba(0,0,0,0.6))",
-            marginLeft: i === 0 ? 0 : "2px",
+            marginLeft: 0,
             zIndex: String(i),
             cursor: "pointer",
-            transform: `rotate(${(i % 2 === 0 ? 1 : -1) * (3 + (i % 4) * 2)}deg)`,
+            transform: "none",
           },
           onclick: () => onPick(p),
         });
@@ -2878,7 +2852,6 @@
     startFridgeHum();
     onCleanup(() => stopFridgeHum());
     const remaining = +(st.budget - st.floorSpent).toFixed(2);
-    const canCheckout = st.floorPick.length > 0;
     const onPick = (drink) => {
       playProductPick();
       const already = st.floorPick.find((p) => p.id === drink.id);
@@ -2916,16 +2889,6 @@
         style: { padding: "0.45rem 0.8rem", borderRadius: "9999px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.65rem", textTransform: "uppercase", cursor: "pointer" },
         onclick: () => setPhase(PHASES.FLOOR),
       }, ["Go to Shelves"])
-    );
-    actions.appendChild(
-      h("button", "font-heading", {
-        style: { padding: "0.45rem 0.8rem", borderRadius: "9999px", border: "none", background: "linear-gradient(135deg,#FF2E63,#7B2FF2)", color: "#fff", fontSize: "0.65rem", textTransform: "uppercase", cursor: canCheckout ? "pointer" : "not-allowed", opacity: canCheckout ? 1 : 0.45 },
-        disabled: !canCheckout,
-        onclick: () => {
-          st.picks = st.floorPick.slice();
-          setPhase(PHASES.RECEIPT);
-        },
-      }, ["Checkout"])
     );
     head.appendChild(actions);
     wrap.appendChild(head);
@@ -2981,20 +2944,10 @@
     onCleanup(() => canvas.removeEventListener("pointermove", handleMove));
     door.appendChild(canvas);
 
-    const pane = h("div", "", {
-      style: { position: "absolute", inset: 0, zIndex: 12, borderRadius: "1rem", background: "transparent", cursor: st.fridgeOpen ? "pointer" : "default" },
-      onclick: () => {
-        if (st.fridgeOpen) {
-          st.fridgeOpen = false;
-          render();
-        }
-      },
-    });
-    if (st.fridgeOpen) door.appendChild(pane);
     const handle = h("div", "", {
       style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: st.fridgeClr >= 25 ? "pointer" : "not-allowed" },
       onclick: () => {
-        if (st.fridgeClr >= 25) {
+        if (st.fridgeOpen || st.fridgeClr >= 25) {
           st.fridgeOpen = !st.fridgeOpen;
           render();
         }
@@ -3003,6 +2956,62 @@
     door.appendChild(handle);
     body.appendChild(door);
     wrap.appendChild(body);
+    const counter = h("div", "", {
+      style: {
+        position: "relative",
+        zIndex: 20,
+        background: "linear-gradient(180deg, #1c0f04 0%, #120a02 100%)",
+        borderTop: "3px solid rgba(180,100,30,0.5)",
+        minHeight: "98px",
+      },
+    });
+    const row = h("div", "", { style: { display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 1rem" } });
+    row.appendChild(h("div", "font-heading", { style: { fontSize: "10px", color: EYEBROW_GOLD, minWidth: "90px" } }, [`AED ${st.floorSpent.toFixed(2)}`]));
+    const pile = h("div", "", { style: { flex: 1, display: "flex", alignItems: "center", gap: "4px", minHeight: "58px", overflowX: "auto" } });
+    if (st.floorPick.length === 0) pile.appendChild(h("p", "font-body", { style: { color: "rgba(255,255,255,0.25)", fontSize: "0.75rem", fontStyle: "italic", margin: 0 } }, ["No items yet"]));
+    st.floorPick.forEach((p) => {
+      pile.appendChild(
+        h("img", "", {
+          src: p.img,
+          alt: p.name,
+          title: p.name,
+          style: { width: "46px", height: "46px", objectFit: "contain", filter: "brightness(1.05) drop-shadow(0 3px 6px rgba(0,0,0,0.6))", cursor: "pointer" },
+          onclick: () => onPick(p),
+        })
+      );
+    });
+    row.appendChild(pile);
+    const right = h("div", "", { style: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.4rem", flexShrink: 0 } });
+    right.appendChild(
+      h(
+        "button",
+        "font-heading",
+        {
+          style: {
+            padding: "0.6rem 1.25rem",
+            background: "#2D1B69",
+            color: "#fff",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            fontSize: "0.75rem",
+            borderRadius: "9999px",
+            border: "none",
+            opacity: st.floorPick.length === 0 ? 0.4 : 1,
+            cursor: st.floorPick.length === 0 ? "not-allowed" : "pointer",
+          },
+          disabled: st.floorPick.length === 0,
+          onclick: () => {
+            st.picks = st.floorPick.slice();
+            setPhase(PHASES.RECEIPT);
+          },
+        },
+        ["Take These"]
+      )
+    );
+    row.appendChild(right);
+    counter.appendChild(row);
+    wrap.appendChild(counter);
     return wrap;
   }
 
@@ -3509,6 +3518,9 @@
         break;
       case PHASES.FLOOR:
         mount(renderFloor());
+        break;
+      case PHASES.FRIDGE:
+        mount(renderFridgeShop());
         break;
       case PHASES.RECEIPT:
         mount(renderReceipt());
