@@ -4,6 +4,7 @@
 
   const PHASES = {
     ENTRANCE: "entrance",
+    COLOR_SHIFT: "color_shift",
     CURTAIN: "curtain",
     REMEMBER: "remember",
     MEMORIES: "memories",
@@ -32,18 +33,23 @@
   const BASE = "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/";
 
   const CLOUDS = [
-    { size: 210, top: 6, left: 7, op: 0.88, parallax: 0.52 },
-    { size: 162, top: 4, left: 52, op: 0.55, parallax: 0.28 },
-    { size: 138, top: 16, left: 28, op: 0.5, parallax: 0.36 },
-    { size: 116, top: 10, left: 74, op: 0.5, parallax: 0.22 },
-    { size: 185, top: 21, left: 18, op: 0.9, parallax: 0.68 },
-    { size: 148, top: 13, left: 63, op: 0.85, parallax: 0.48 },
-    { size: 122, top: 24, left: 40, op: 0.76, parallax: 0.4 },
+    { size: 210, top: 6, left: 7, op: 0.88, parallax: 0.52, drift: 22, driftDur: 18 },
+    { size: 162, top: 4, left: 52, op: 0.55, parallax: 0.28, drift: -18, driftDur: 24 },
+    { size: 138, top: 16, left: 28, op: 0.5, parallax: 0.36, drift: 28, driftDur: 20 },
+    { size: 116, top: 10, left: 74, op: 0.5, parallax: 0.22, drift: -14, driftDur: 16 },
+    { size: 185, top: 21, left: 18, op: 0.9, parallax: 0.68, drift: 20, driftDur: 22 },
+    { size: 148, top: 13, left: 63, op: 0.85, parallax: 0.48, drift: -24, driftDur: 19 },
+    { size: 122, top: 24, left: 40, op: 0.76, parallax: 0.4, drift: 16, driftDur: 26 },
+    { size: 190, top: 2, left: -4, op: 0.7, parallax: 0.44, drift: 30, driftDur: 21 },
+    { size: 145, top: 8, left: 88, op: 0.65, parallax: 0.32, drift: -20, driftDur: 17 },
+    { size: 105, top: 1, left: 70, op: 0.55, parallax: 0.2, drift: 18, driftDur: 23 },
+    { size: 170, top: 18, left: -6, op: 0.8, parallax: 0.58, drift: 26, driftDur: 28 },
+    { size: 130, top: 20, left: 92, op: 0.6, parallax: 0.38, drift: -22, driftDur: 15 },
   ];
 
   const BALLS = [
-    { size: 82, top: 62, pad: 20, yM: 130, Rpx: 30, riseVh: 14, r: 340, delay: 0, duration: 18 },
-    { size: 68, top: 68, pad: 16, yM: 110, Rpx: 24, riseVh: 12, r: 300, delay: -9, duration: 18 },
+    { size: 82, top: 72, pad: 20, yM: 130, Rpx: 30, riseVh: 14, r: 340, delay: 0, duration: 18 },
+    { size: 68, top: 78, pad: 16, yM: 110, Rpx: 24, riseVh: 12, r: 300, delay: -9, duration: 18 },
   ];
 
   const INTRO_LINES = [
@@ -399,7 +405,33 @@
     const style = document.createElement("style");
     style.id = BAG_DROP_STYLE_ID;
     style.textContent =
-      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-26px) scale(0.9) rotate(-6deg)}70%{opacity:1;transform:translateY(4px) scale(1.02) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}";
+      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-88vh) scale(0.82) rotate(-12deg)}52%{opacity:1;transform:translateY(12px) scale(1.04) rotate(5deg)}78%{opacity:1;transform:translateY(-6px) scale(0.98) rotate(-2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}@keyframes bagWeightSettle{0%{transform:translateY(0) scaleY(1)}35%{transform:translateY(2px) scaleY(0.992)}62%{transform:translateY(7px) scaleY(0.975)}78%{transform:translateY(4px) scaleY(0.984)}100%{transform:translateY(0) scaleY(1)}}";
+    document.head.appendChild(style);
+  }
+  const COLOR_SHIFT_STYLE_ID = "baqala-color-shift-keyframes";
+  function injectColorShiftKeyframes() {
+    if (document.getElementById(COLOR_SHIFT_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = COLOR_SHIFT_STYLE_ID;
+    style.textContent = "@keyframes baqalaColorShift{0%{opacity:0}100%{opacity:1}}";
+    document.head.appendChild(style);
+  }
+  const CLOUD_DRIFT_STYLE_ID = "baqala-cloud-drift-keyframes";
+  function injectCloudDriftKeyframes() {
+    if (document.getElementById(CLOUD_DRIFT_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = CLOUD_DRIFT_STYLE_ID;
+    style.textContent =
+      "@keyframes baqalaCloudDrift{0%{transform:translateX(var(--base-shift))}50%{transform:translateX(calc(var(--base-shift) + var(--cloud-drift)))}100%{transform:translateX(var(--base-shift))}}";
+    document.head.appendChild(style);
+  }
+  const REMEMBER_BUBBLE_STYLE_ID = "baqala-remember-bubble-keyframes";
+  function injectRememberBubbleKeyframes() {
+    if (document.getElementById(REMEMBER_BUBBLE_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = REMEMBER_BUBBLE_STYLE_ID;
+    style.textContent =
+      "@keyframes rememberBubblePopIn{0%{opacity:0;transform:scale(0.82) translateY(10px)}62%{opacity:1;transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}";
     document.head.appendChild(style);
   }
 
@@ -757,6 +789,7 @@
 
   function renderEntrance() {
     injectBallKeyframes();
+    injectCloudDriftKeyframes();
     const p = st.entranceP;
     const phase1 = Math.min(1, p * 2);
     const phase2 = Math.max(0, (p - 0.5) * 2);
@@ -764,17 +797,13 @@
     const introOpacity = phase2;
     const awningTop = Math.max(-18, 100 - p * 118);
     const cloudShift = p * 200;
-    const skyTop = p > 0.3 ? `hsl(${38 - (1 - p) * 0}, ${60 + p * 20}%, ${90 + p * 5}%)` : "#5db8e8";
-    const skyMid = p > 0.3 ? "#F5EDD8" : "#87CEEB";
-    const skyBot = p > 0.3 ? "#FFF9F0" : "#b8e0f5";
     const wrap = h("div", "", { style: { position: "fixed", inset: 0, overflow: "hidden" } });
     wrap.appendChild(
       h("div", "", {
         style: {
           position: "absolute",
           inset: 0,
-          background: `linear-gradient(180deg, ${skyTop} 0%, ${skyMid} 40%, ${skyBot} 100%)`,
-          transition: "background 0.3s",
+          background: "linear-gradient(180deg, #5db8e8 0%, #87CEEB 40%, #b8e0f5 100%)",
         },
       })
     );
@@ -796,11 +825,18 @@
           left: `${c.left}%`,
           width: `${c.size}px`,
           opacity: c.op,
-          transform: `translateX(${cloudShift * c.parallax}px)`,
-          transition: "transform 0.05s linear",
         },
       });
-      d.appendChild(h("img", "", { src: CLOUD_IMG, alt: "", "aria-hidden": "true", style: { width: "100%", display: "block" } }));
+      const driftWrap = h("div", "", {
+        style: {
+          width: "100%",
+          "--base-shift": `${(cloudShift * c.parallax).toFixed(2)}px`,
+          "--cloud-drift": `${c.drift || 0}px`,
+          animation: `baqalaCloudDrift ${c.driftDur || 20}s ease-in-out infinite`,
+        },
+      });
+      driftWrap.appendChild(h("img", "", { src: CLOUD_IMG, alt: "", "aria-hidden": "true", style: { width: "100%", display: "block" } }));
+      d.appendChild(driftWrap);
       cloudLayer.appendChild(d);
     });
     wrap.appendChild(cloudLayer);
@@ -900,7 +936,7 @@
             fontSize: "10px",
             letterSpacing: "0.25em",
             textAlign: "center",
-            color: BAQLALAND_BLUE,
+            color: "#1f3d66",
             textTransform: "uppercase",
             marginBottom: "2.5rem",
             marginTop: 0,
@@ -922,7 +958,7 @@
           {
             style: {
               fontSize: "clamp(0.875rem, 2vw, 1.125rem)",
-              color: "rgba(13,45,66,0.9)",
+              color: "rgba(24,55,92,0.95)",
               lineHeight: 1.375,
               opacity: vis,
               transform: `translateY(${ty}px)`,
@@ -952,12 +988,12 @@
               border: "none",
               cursor: "pointer",
               minHeight: "52px",
-              background: "linear-gradient(135deg, #e05e30, #c0392b)",
-              boxShadow: "0 4px 30px rgba(192,57,43,0.45)",
+              background: "linear-gradient(135deg, #2c4f7f, #16365f)",
+              boxShadow: "0 4px 26px rgba(22,54,95,0.45)",
             },
             onclick: () => {
               playWhoosh();
-              setPhase(PHASES.REMEMBER);
+              setPhase(PHASES.COLOR_SHIFT);
             },
           },
           ["Enter Baqalaland"]
@@ -1014,6 +1050,7 @@
   }
 
   function renderRemember() {
+    injectRememberBubbleKeyframes();
     const wrap = h("div", "", {
       style: {
         position: "fixed",
@@ -1028,7 +1065,7 @@
     });
     wrap.appendChild(h("div", "tiled-floor", { style: { position: "absolute", inset: 0, opacity: 0.1, pointerEvents: "none" } }));
     const bubbles = h("div", "", { style: { position: "absolute", inset: 0, pointerEvents: "none" } });
-    REMEMBER_THINGS.forEach((thing) => {
+    REMEMBER_THINGS.forEach((thing, i) => {
       const sz = BUBBLE_SIZES[thing.size];
       const anchoredRight = thing.anchor === "right";
       const row = h("div", "", {
@@ -1039,6 +1076,9 @@
           flexDirection: "column",
           alignItems: anchoredRight ? "flex-end" : "flex-start",
           gap: "0.25rem",
+          opacity: 0,
+          transformOrigin: anchoredRight ? "right center" : "left center",
+          animation: `rememberBubblePopIn 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) ${i * 0.14}s forwards`,
           ...(anchoredRight ? { right: thing.x, left: "auto" } : { left: thing.x, right: "auto" }),
         },
       });
@@ -1092,6 +1132,24 @@
       )
     );
     wrap.appendChild(center);
+    return wrap;
+  }
+
+  function renderColorShift() {
+    injectColorShiftKeyframes();
+    const wrap = h("div", "", {
+      style: {
+        position: "fixed",
+        inset: 0,
+        background: "#1a0f40",
+        opacity: 0,
+        animation: "baqalaColorShift 0.85s ease-in-out forwards",
+      },
+    });
+    const tid = setTimeout(() => {
+      if (st.phase === PHASES.COLOR_SHIFT) setPhase(PHASES.REMEMBER);
+    }, 830);
+    onCleanup(() => clearTimeout(tid));
     return wrap;
   }
 
@@ -2861,7 +2919,15 @@
         render();
         return;
       }
-      if (+(st.floorSpent + drink.price).toFixed(2) > st.budget) return;
+      if (+(st.floorSpent + drink.price).toFixed(2) > st.budget) {
+        st.floorOver = true;
+        render();
+        setTimeout(() => {
+          st.floorOver = false;
+          render();
+        }, 1500);
+        return;
+      }
       st.floorPick = [...st.floorPick, drink];
       st.floorSpent = +(st.floorSpent + drink.price).toFixed(2);
       render();
@@ -2881,7 +2947,14 @@
         borderBottom: "1px solid rgba(0,209,255,0.2)",
       },
     });
-    head.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.85rem", letterSpacing: "0.06em", color: "#9feeff", textTransform: "uppercase" } }, ["Fridge"]));
+    const headL = h("div", "", {});
+    headL.appendChild(
+      h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.34em", color: BAQLALAND_BLUE, margin: 0 } }, ["Baqalaland"])
+    );
+    headL.appendChild(
+      h("p", "font-heading", { style: { fontWeight: 700, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: EYEBROW_GOLD, margin: "0.15rem 0 0" } }, ["Pick Your Snacks"])
+    );
+    head.appendChild(headL);
     const actions = h("div", "", { style: { display: "flex", gap: "0.4rem", alignItems: "center" } });
     actions.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.8rem", color: remaining < 1 ? "#FF2E63" : "#FFD700" } }, [`${remaining} AED`]));
     actions.appendChild(
@@ -2892,6 +2965,16 @@
     );
     head.appendChild(actions);
     wrap.appendChild(head);
+    if (st.floorOver) {
+      wrap.appendChild(
+        h(
+          "div",
+          "font-heading",
+          { style: { position: "relative", zIndex: 30, background: "#FF2E63", color: "#fff", textAlign: "center", padding: "0.35rem", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase" } },
+          ["Out of budget"]
+        )
+      );
+    }
 
     const body = h("div", "", { style: { position: "relative", flex: 1, padding: "1rem", display: "flex", alignItems: "center", justifyContent: "center" } });
     const door = h("div", "", { style: { position: "relative", width: "min(92vw, 560px)", height: "min(48vw, 280px)" } });
@@ -2945,7 +3028,7 @@
     door.appendChild(canvas);
 
     const handle = h("div", "", {
-      style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: st.fridgeClr >= 25 ? "pointer" : "not-allowed" },
+      style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: "pointer", opacity: st.fridgeOpen || st.fridgeClr >= 25 ? 1 : 0.75 },
       onclick: () => {
         if (st.fridgeOpen || st.fridgeClr >= 25) {
           st.fridgeOpen = !st.fridgeOpen;
@@ -3256,41 +3339,43 @@
           position: "absolute",
           left: "14%",
           right: "14%",
-          top: "38%",
-          bottom: "14%",
-          zIndex: 1,
+          top: "28%",
+          bottom: "10%",
+          zIndex: 3,
           pointerEvents: "none",
+          overflow: "visible",
+          borderRadius: "18% 18% 26% 26%",
+          display: "grid",
+          alignContent: "end",
+          justifyItems: "center",
+          padding: "0.3rem 0.2rem 0.35rem",
         },
       });
-      const positionsMulti = [
-        { x: "6%", y: "12%" },
-        { x: "48%", y: "4%" },
-        { x: "26%", y: "44%" },
-        { x: "58%", y: "40%" },
-        { x: "4%", y: "68%" },
-        { x: "42%", y: "62%" },
-      ];
-      const picksShown = st.picks.slice(0, 6);
-      const snackSize = picksShown.length <= 1 ? "clamp(5.75rem, 32vw, 8rem)" : "clamp(4rem, 20vw, 5.75rem)";
+      const picksShown = st.picks.slice(0, 12);
+      const bagWeightDur = `${Math.min(2.1, Math.max(1.15, 0.95 + picksShown.length * 0.12))}s`;
+      const cols = picksShown.length <= 2 ? 1 : picksShown.length <= 6 ? 2 : picksShown.length <= 9 ? 3 : 4;
+      snacksLayer.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+      snacksLayer.style.columnGap = picksShown.length > 9 ? "0.16rem" : "0.22rem";
+      snacksLayer.style.rowGap = picksShown.length > 9 ? "0.08rem" : "0.14rem";
+      const snackSize =
+        picksShown.length <= 1
+          ? "clamp(5.4rem, 30vw, 7.2rem)"
+          : picksShown.length <= 4
+          ? "clamp(4.1rem, 18vw, 5rem)"
+          : picksShown.length <= 8
+          ? "clamp(3.1rem, 13vw, 3.9rem)"
+          : "clamp(2.3rem, 10vw, 3.1rem)";
       picksShown.forEach((snack, i) => {
-        const pos =
-          picksShown.length === 1
-            ? { x: "50%", y: "50%" }
-            : positionsMulti[i] || { x: "20%", y: "18%" };
         snacksLayer.appendChild(
           h("img", "", {
             src: snack.img,
             alt: snack.name,
             style: {
-              position: "absolute",
               width: snackSize,
               height: snackSize,
               objectFit: "contain",
-              left: pos.x,
-              top: pos.y,
-              transform: picksShown.length === 1 ? "translate(-50%, -50%)" : "none",
-              filter: "brightness(0.92) drop-shadow(0 2px 6px rgba(0,0,0,0.45))",
-              animation: `bagDropIn 0.55s cubic-bezier(0.2,0.8,0.2,1) ${i * 0.1}s both`,
+              filter: "brightness(0.96) drop-shadow(0 3px 8px rgba(0,0,0,0.42))",
+              animation: `bagDropIn 0.8s cubic-bezier(0.18,0.86,0.24,1) ${i * 0.14}s both`,
             },
           })
         );
@@ -3308,7 +3393,9 @@
             position: "relative",
             zIndex: 2,
             pointerEvents: "none",
-            opacity: 0.88,
+            opacity: 1,
+            transformOrigin: "50% 100%",
+            animation: `bagWeightSettle ${bagWeightDur} ease-in-out both`,
           },
         })
       );
@@ -3368,7 +3455,7 @@
         h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "1rem" } }, ["the real question"])
       );
       box.appendChild(
-        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.5rem, 5vw, 1.875rem)", color: "#fff", marginBottom: "0.5rem" } }, ["What do you eat first?"])
+        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.5rem, 5vw, 1.875rem)", color: "#fff", marginBottom: "0.5rem" } }, ["What do you have first?"])
       );
       box.appendChild(
         h("p", "font-body", { style: { fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", fontStyle: "italic", marginBottom: "2rem" } }, ["Tap one. Be honest with yourself."])
@@ -3500,6 +3587,9 @@
     switch (st.phase) {
       case PHASES.ENTRANCE:
         mount(renderEntrance());
+        break;
+      case PHASES.COLOR_SHIFT:
+        mount(renderColorShift());
         break;
       case PHASES.REMEMBER:
         mount(renderRemember());
