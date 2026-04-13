@@ -2908,7 +2908,7 @@
         borderBottom: "1px solid rgba(0,209,255,0.2)",
       },
     });
-    head.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.85rem", letterSpacing: "0.06em", color: "#9feeff", textTransform: "uppercase" } }, ["Fridge"]);
+    head.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.85rem", letterSpacing: "0.06em", color: "#9feeff", textTransform: "uppercase" } }, ["Fridge"]));
     const actions = h("div", "", { style: { display: "flex", gap: "0.4rem", alignItems: "center" } });
     actions.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.8rem", color: remaining < 1 ? "#FF2E63" : "#FFD700" } }, [`${remaining} AED`]));
     actions.appendChild(
