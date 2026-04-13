@@ -949,8 +949,12 @@
       style: { maxWidth: "min(50rem, 100%)", width: "100%", textAlign: "center", marginBottom: "3rem", boxSizing: "border-box" },
     });
     INTRO_LINES.forEach((line, i) => {
-      const vis = phase2 > 0.2 + i * 0.15 ? 1 : 0;
-      const ty = Math.max(0, 1 - (phase2 - 0.2 - i * 0.15) * 5) * 16;
+      const threshold = 0.2 + i * 0.15;
+      const reveal = Math.min(1, Math.max(0, (phase2 - threshold) * 5));
+      const vis = reveal > 0 ? 1 : 0;
+      const ty = (1 - reveal) * 18;
+      const scale = 0.965 + reveal * 0.035;
+      const blur = (1 - reveal) * 7;
       linesBox.appendChild(
         h(
           "p",
@@ -961,8 +965,9 @@
               color: "rgba(24,55,92,0.95)",
               lineHeight: 1.375,
               opacity: vis,
-              transform: `translateY(${ty}px)`,
-              transition: "opacity 0.4s, transform 0.4s",
+              transform: `translateY(${ty}px) scale(${scale})`,
+              filter: `blur(${blur}px)`,
+              transition: "opacity 0.35s, transform 0.35s, filter 0.35s",
               margin: "0 0 1rem",
             },
           },
@@ -1141,7 +1146,7 @@
       style: {
         position: "fixed",
         inset: 0,
-        background: "#1a0f40",
+        background: "#2D1B69",
         opacity: 0,
         animation: "baqalaColorShift 0.85s ease-in-out forwards",
       },
@@ -3341,7 +3346,7 @@
           right: "14%",
           top: "28%",
           bottom: "10%",
-          zIndex: 3,
+          zIndex: 1,
           pointerEvents: "none",
           overflow: "visible",
           borderRadius: "18% 18% 26% 26%",
@@ -3411,20 +3416,28 @@
           },
         }, ["You made it home."])
       );
-      box.appendChild(
-        h("p", "font-body", {
-          style: {
-            fontSize: "0.875rem",
-            color: "rgba(255,255,255,0.45)",
-            fontStyle: "italic",
-            marginBottom: "2rem",
-            maxWidth: "28rem",
-            lineHeight: 1.55,
-            whiteSpace: "normal",
-            wordWrap: "break-word",
-          },
-        }, ["The bag crinkles. You sit on the floor with your snacks spread out."])
+      const noteCol = h("div", "", {
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          gap: "0.2rem",
+          marginBottom: "2rem",
+          maxWidth: "28rem",
+        },
+      });
+      noteCol.appendChild(
+        h("p", "font-body", { style: { fontSize: "0.875rem", color: "rgba(255,255,255,0.45)", fontStyle: "italic", lineHeight: 1.55, margin: 0 } }, [
+          "The bag crinkles.",
+        ])
       );
+      noteCol.appendChild(
+        h("p", "font-body", { style: { fontSize: "0.875rem", color: "rgba(255,255,255,0.45)", fontStyle: "italic", lineHeight: 1.55, margin: 0 } }, [
+          "You sit on the floor with your snacks spread out.",
+        ])
+      );
+      box.appendChild(noteCol);
       box.appendChild(
         h(
           "button",
