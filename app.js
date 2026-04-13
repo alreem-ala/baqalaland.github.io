@@ -10,6 +10,7 @@
     QUIZ: "quiz",
     BUDGET: "budget", 
     FLOOR: "floor",
+    FRIDGE: "fridge",
     RECEIPT: "receipt",
     ENDING: "ending",
   };
@@ -72,17 +73,17 @@
     { id: "funfare", name: "Fun Fare", price: 1, img: BASE + "f4b01209f_19.png" },
     { id: "polo", name: "Polo Mints", price: 0.5, img: BASE + "7e236964f_20.png" },
     { id: "funtime_fizzy_bottle", name: "Funtime Fizzy Bottle", price: 1, img: "./assets/shelf/funtime-fizzy-bottle.png" },
-    { id: "futen_bubble_gum", name: "Futen Bubble Gum", price: 0.5, img: "./assets/shelf/futen-bubble-gum.png" },
-    { id: "toffo", name: "Toffo", price: 0.5, img: "./assets/shelf/tofco.png" },
+    { id: "fusen_bubble_gum", name: "Fusen Bubble Gum", price: 0.5, img: "./assets/shelf/fusen-bubble-gum.png" },
+    { id: "toffo", name: "Toffo", price: 0.5, img: "./assets/shelf/toffo.png" },
     { id: "sourpunk", name: "Sourpunk", price: 0.75, img: "./assets/shelf/sourpunk.png" },
     { id: "choco_rocco", name: "Choco Rocco", price: 1, img: "./assets/shelf/choco-rocco.png" },
     { id: "choki_choki", name: "Choki Choki", price: 0.75, img: "./assets/shelf/choki-choki.png" },
     { id: "choco_pound_cake", name: "Chocolate Pound Cake", price: 1.5, img: "./assets/shelf/chocolate-pound-cake.png" },
     { id: "yan_yan", name: "Yan Yan", price: 1.25, img: "./assets/shelf/yan-yan.png" },
-    { id: "bubbly_candy", name: "Bubbly Candy", price: 0.5, img: "./assets/shelf/bubbly-candy.png" },
-    { id: "papy_snacks", name: "Papy Snacks", price: 1, img: "./assets/shelf/pypy-snacks.png" },
+    { id: "bubbly_candy", name: "Bubbly", price: 0.5, img: "./assets/shelf/bubbly-candy.png" },
+    { id: "papy_snacks", name: "Papy Snacks", price: 1, img: "./assets/shelf/papy-snacks.png" },
     { id: "juicy_fruit", name: "Juicy Fruit", price: 0.5, img: "./assets/shelf/juicy-fruit.png" },
-    { id: "smarties_eight", name: "Smarties Eight", price: 0.75, img: "./assets/shelf/smarties-eight.png" },
+    { id: "smarties_eight", name: "Smarties", price: 0.75, img: "./assets/shelf/smarties-eight.png" },
     { id: "milk_chews", name: "Milk Chews", price: 0.5, img: "./assets/shelf/milk-chews.png" },
     { id: "pepero_funzels", name: "Pepero Funzels", price: 1.5, img: "./assets/shelf/pepero-funzels.png" },
     { id: "quality_street", name: "Quality Street", price: 2, img: "./assets/shelf/quality-street.png" },
@@ -94,7 +95,7 @@
     { id: "star_mango", name: "Star Mango", price: 1.25, img: "./assets/fridge/star-mango.png" },
     { id: "frenzy_drink", name: "Frenzy", price: 1, img: "./assets/fridge/frenzy.png" },
     { id: "danao", name: "Danao", price: 1.5, img: "./assets/fridge/danao.png" },
-    { id: "bandung", name: "Bandung Milk", price: 1.5, img: "./assets/fridge/bandung-pink-milk.png" },
+    { id: "bandung", name: "Bandung Milk", price: 1.5, img: "./assets/fridge/bandung-milk.png" },
   ];
 
   const FLOOR_SHOWCASE_IDS = [
@@ -103,7 +104,7 @@
     "chips_oman",
     "papy_snacks",
     "funtime_fizzy_bottle",
-    "futen_bubble_gum",
+    "fusen_bubble_gum",
     "toffo",
     "sourpunk",
     "choco_rocco",
@@ -392,20 +393,29 @@
     container.textContent = allCSS;
     document.head.appendChild(container);
   }
+  const BAG_DROP_STYLE_ID = "baqala-bag-drop-keyframes";
+  function injectBagDropKeyframes() {
+    if (document.getElementById(BAG_DROP_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = BAG_DROP_STYLE_ID;
+    style.textContent =
+      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-26px) scale(0.9) rotate(-6deg)}70%{opacity:1;transform:translateY(4px) scale(1.02) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}";
+    document.head.appendChild(style);
+  }
 
   const MG_ITEMS = [
     { id: "chipsticks", img: BASE + "2dc4fdc49_1.png", label: "Chipsticks" },
     { id: "salad_chips", img: BASE + "52a18141c_2.png", label: "Salad Chips" },
-    { id: "chips", img: BASE + "52a18141c_2.png", label: "Salad Chips" },
     { id: "square_crisps", img: BASE + "9ae26c1fd_3.png", label: "Square Crisps" },
-    { id: "super_ring", img: BASE + "b7e1a3e31_7.png", label: "Super Ring" },
-    { id: "ali_baba", img: BASE + "0eb68be80_9.png", label: "Ali Baba" },
-    { id: "majid_crispy", img: BASE + "7ca857f36_6.png", label: "Majid Crispy" },
-    { id: "qrakers", img: BASE + "626e806c3_8.png", label: "Qrakers" },
-    { id: "oishi_prawns", img: BASE + "5ae7f1637_12.png", label: "Oishi Prawns" },
-    { id: "chips_oman", img: "./assets/shelf/chips-oman.png", label: "Chips Oman" },
-    { id: "papy_snacks", img: "./assets/shelf/pypy-snacks.png", label: "Papy Snacks" },
-    { id: "raja_chips", img: BASE + "2eb84a7f8_10.png", label: "Raja Chips" },
+    { id: "areej", img: BASE + "4cce014cf_13.png", label: "Areej Juice" },
+    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun" },
+    { id: "rani", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice" },
+    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top" },
+    { id: "laban_up", img: "./assets/fridge/laban-up.png", label: "Laban Up" },
+    { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry" },
+    { id: "bandung", img: "./assets/fridge/bandung-milk.png", label: "Bandung Milk" },
+    { id: "papy_snacks", img: "./assets/shelf/papy-snacks.png", label: "Papy Snacks" },
+    { id: "yan_yan", img: "./assets/shelf/yan-yan.png", label: "Yan Yan" },
   ];
   const MG_SHOW = 5;
   const MG_SHOW_MS = 7000;
@@ -427,17 +437,37 @@
   ];
   const SQ_LEN = 5;
   const FRIDGE_DRINKS = [
-    { img: BASE + "4cce014cf_13.png", label: "Areej", x: "8%", y: "8%" },
-    { img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "26%", y: "8%" },
-    { img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "44%", y: "8%" },
-    { img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "62%", y: "8%" },
-    { img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "80%", y: "8%" },
-    { img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "8%", y: "55%" },
-    { img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "22%", y: "55%" },
-    { img: "./assets/fridge/frenzy.png", label: "Frenzy", x: "36%", y: "55%" },
-    { img: "./assets/fridge/danao.png", label: "Danao", x: "50%", y: "55%" },
-    { img: "./assets/fridge/bandung-pink-milk.png", label: "Bandung Milk", x: "64%", y: "55%" },
+    { id: "areej", img: BASE + "4cce014cf_13.png", label: "Areej", x: "12%", y: "16%" },
+    { id: "fruit_shoot", img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "30%", y: "16%" },
+    { id: "rani", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "48%", y: "16%" },
+    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "66%", y: "16%" },
+    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "84%", y: "16%" },
+    { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "12%", y: "50%" },
+    { id: "star_mango", img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "30%", y: "50%" },
+    { id: "frenzy_drink", img: "./assets/fridge/frenzy.png", label: "Frenzy", x: "48%", y: "50%" },
+    { id: "danao", img: "./assets/fridge/danao.png", label: "Danao", x: "66%", y: "50%" },
+    { id: "bandung", img: "./assets/fridge/bandung-milk.png", label: "Bandung Milk", x: "84%", y: "50%" },
+    { id: "igloo_mango_tub", img: "./assets/fridge/igloo-mango-tub.png", label: "Igloo Mango", x: "21%", y: "84%" },
+    { id: "igloo_evens", img: "./assets/fridge/igloo-evens-chocolate.png", label: "Igloo Evens", x: "39%", y: "84%" },
+    { id: "igloo_maxi_sup", img: "./assets/fridge/igloo-maxi-sup.png", label: "Igloo Maxi Sup", x: "57%", y: "84%" },
+    { id: "laban_up", img: "./assets/fridge/laban-up.png", label: "Laban Up", x: "75%", y: "84%" },
   ];
+  const FRIDGE_PRICE_BY_ID = {
+    areej: 1,
+    fruit_shoot: 2,
+    rani: 1,
+    suntop: 0.75,
+    caprisun: 1.5,
+    canada_dry: 1.5,
+    star_mango: 1.25,
+    frenzy_drink: 1,
+    danao: 1.5,
+    bandung: 1.5,
+    igloo_mango_tub: 1.5,
+    igloo_evens: 1.25,
+    igloo_maxi_sup: 1.25,
+    laban_up: 1,
+  };
   const CANDY_SHELF_IMGS = [
     BASE + "2dc4fdc49_1.png",
     BASE + "52a18141c_2.png",
@@ -449,7 +479,7 @@
     BASE + "0eb68be80_9.png",
     BASE + "5ae7f1637_12.png",
     "./assets/shelf/chips-oman.png",
-    "./assets/shelf/pypy-snacks.png",
+    "./assets/shelf/papy-snacks.png",
   ];
   const CANDY_TARGET = "./assets/shelf/chips-oman.png";
   const CANDY_QUOTE = "It was on the top shelf.\nYou weren't tall enough.\nYou jumped for the chips anyway.";
@@ -559,6 +589,7 @@
     fridgeClr: 0,
     fridgeDone: false,
     fridgeSnapshot: null,
+    fridgeOpen: false,
   };
 
   function setPhase(next) {
@@ -572,6 +603,7 @@
       st.fridgeClr = 0;
       st.fridgeDone = false;
       st.fridgeSnapshot = null;
+      st.fridgeOpen = false;
       st.candyH = 0;
       st.candyHold = false;
       st.candyGrab = false;
@@ -687,6 +719,7 @@
     st.fridgeClr = 0;
     st.fridgeDone = false;
     st.fridgeSnapshot = null;
+    st.fridgeOpen = false;
     render();
   }
 
@@ -1053,7 +1086,7 @@
         "button",
         "font-heading btn-raspberry",
         {
-          onclick: () => setPhase(PHASES.MEMORIES),
+          onclick: () => setPhase(PHASES.QUIZ),
         },
         ["I Remember"]
       )
@@ -2336,7 +2369,7 @@
           "button",
           "font-heading btn-raspberry",
           {
-            onclick: () => setPhase(PHASES.CURTAIN),
+            onclick: () => setPhase(PHASES.FLOOR),
           },
           ["Enter the Baqala"]
         )
@@ -2567,8 +2600,7 @@
               inset: "-6px",
               borderRadius: "16px",
               pointerEvents: "none",
-              background: "radial-gradient(ellipse 80% 85% at 50% 45%, rgba(255,215,0,0.2) 0%, rgba(255,200,80,0.06) 50%, transparent 72%)",
-              boxShadow: "0 0 18px rgba(255,215,0,0.2)",
+              background: "radial-gradient(ellipse 80% 85% at 50% 45%, rgba(255,215,0,0.16) 0%, rgba(255,200,80,0.04) 50%, transparent 72%)",
             },
           })
         );
@@ -2581,7 +2613,7 @@
             width: "clamp(42px, 8vw, 68px)",
             height: "clamp(42px, 8vw, 68px)",
             objectFit: "contain",
-            filter: sel ? "brightness(1.08) saturate(1.15) drop-shadow(0 6px 14px rgba(255,215,0,0.35))" : "brightness(0.9)",
+            filter: sel ? "brightness(1.02)" : "brightness(0.9)",
             transition: "filter 0.2s",
           },
         })
@@ -2659,10 +2691,10 @@
       h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.34em", color: BAQLALAND_BLUE, margin: 0 } }, ["Baqalaland"])
     );
     headL.appendChild(
-      h("p", "font-heading", { style: { fontWeight: 700, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: EYEBROW_GOLD, margin: "0.15rem 0 0" } }, ["Pick Your Memories"])
+      h("p", "font-heading", { style: { fontWeight: 700, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.05em", color: EYEBROW_GOLD, margin: "0.15rem 0 0" } }, ["Pick Your Snacks"])
     );
     head.appendChild(headL);
-    const remEl = h("div", "", { style: { textAlign: "right" } });
+    const remEl = h("div", "", { style: { textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.35rem" } });
     remEl.appendChild(h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.15em", color: EYEBROW_GOLD, textTransform: "uppercase", margin: 0 } }, ["Remaining"]));
     remEl.appendChild(
       h(
@@ -2672,6 +2704,55 @@
         [`${remaining} AED`]
       )
     );
+    const topActions = h("div", "", { style: { display: "flex", gap: "0.4rem" } });
+    topActions.appendChild(
+      h(
+        "button",
+        "font-heading",
+        {
+          style: {
+            padding: "0.45rem 0.8rem",
+            borderRadius: "9999px",
+            border: "1px solid rgba(255,255,255,0.22)",
+            background: "rgba(255,255,255,0.06)",
+            color: "#fff",
+            fontSize: "0.65rem",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+          },
+          onclick: () => setPhase(PHASES.FRIDGE),
+        },
+        ["Go to Fridge"]
+      )
+    );
+    topActions.appendChild(
+      h(
+        "button",
+        "font-heading",
+        {
+          style: {
+            padding: "0.45rem 0.8rem",
+            borderRadius: "9999px",
+            border: "none",
+            background: "linear-gradient(135deg,#FF2E63,#7B2FF2)",
+            color: "#fff",
+            fontSize: "0.65rem",
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            cursor: st.floorPick.length === 0 ? "not-allowed" : "pointer",
+            opacity: st.floorPick.length === 0 ? 0.45 : 1,
+          },
+          disabled: st.floorPick.length === 0,
+          onclick: () => {
+            st.picks = st.floorPick.slice();
+            setPhase(PHASES.RECEIPT);
+          },
+        },
+        ["Checkout"]
+      )
+    );
+    remEl.appendChild(topActions);
     head.appendChild(remEl);
     wrap.appendChild(head);
     if (st.floorOver) {
@@ -2736,7 +2817,7 @@
             height: "52px",
             objectFit: "contain",
             filter: "brightness(1.05) drop-shadow(0 4px 8px rgba(0,0,0,0.6))",
-            marginLeft: i === 0 ? 0 : "-16px",
+            marginLeft: i === 0 ? 0 : "2px",
             zIndex: String(i),
             cursor: "pointer",
             transform: `rotate(${(i % 2 === 0 ? 1 : -1) * (3 + (i % 4) * 2)}deg)`,
@@ -2954,6 +3035,7 @@
   }
 
   function renderEnding() {
+    injectBagDropKeyframes();
     const wrap = h("div", "", {
       style: {
         position: "fixed",
@@ -3048,7 +3130,7 @@
         { x: "42%", y: "62%" },
       ];
       const picksShown = st.picks.slice(0, 6);
-      const snackSize = picksShown.length <= 1 ? "clamp(4.5rem, 28vw, 6.5rem)" : "clamp(3.25rem, 16vw, 4.75rem)";
+      const snackSize = picksShown.length <= 1 ? "clamp(5.75rem, 32vw, 8rem)" : "clamp(4rem, 20vw, 5.75rem)";
       picksShown.forEach((snack, i) => {
         const pos =
           picksShown.length === 1
@@ -3067,6 +3149,7 @@
               top: pos.y,
               transform: picksShown.length === 1 ? "translate(-50%, -50%)" : "none",
               filter: "brightness(0.92) drop-shadow(0 2px 6px rgba(0,0,0,0.45))",
+              animation: `bagDropIn 0.55s cubic-bezier(0.2,0.8,0.2,1) ${i * 0.1}s both`,
             },
           })
         );
