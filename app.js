@@ -14,12 +14,12 @@
     ENDING: "ending",
   };
 
-  /** Small-caps section labels  same gold tint as Memory 02 */
+  /** Small-caps section labels ï¿½ same gold tint as Memory 02 */
   const SUBHEADING_COLOR = "rgba(255,215,0,0.5)";
   const EYEBROW_GOLD = "rgba(255,215,0,0.7)";
   const BAQLALAND_BLUE = "#00D1FF";
 
-  /** Local 22 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
+  /** Local 2ï¿½2 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
   const CLOUD_IMG =
     "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/5ee33b51e_image.png";
   const BALL_IMG =
@@ -41,8 +41,8 @@
   ];
 
   const BALLS = [
-    { size: 82, top: 52, pad: 20, yM: 130, Rpx: 30, riseVh: 14, r: 340, delay: 0, duration: 18 },
-    { size: 68, top: 58, pad: 16, yM: 110, Rpx: 24, riseVh: 12, r: 300, delay: -9, duration: 18 },
+    { size: 82, top: 62, pad: 20, yM: 130, Rpx: 30, riseVh: 14, r: 340, delay: 0, duration: 18 },
+    { size: 68, top: 68, pad: 16, yM: 110, Rpx: 24, riseVh: 12, r: 300, delay: -9, duration: 18 },
   ];
 
   const INTRO_LINES = [
@@ -71,11 +71,61 @@
     { id: "fruit_shoot", name: "Fruit Shoot", price: 2, img: BASE + "c51d107cf_17.png" },
     { id: "funfare", name: "Fun Fare", price: 1, img: BASE + "f4b01209f_19.png" },
     { id: "polo", name: "Polo Mints", price: 0.5, img: BASE + "7e236964f_20.png" },
+    { id: "funtime_fizzy_bottle", name: "Funtime Fizzy Bottle", price: 1, img: "./assets/shelf/funtime-fizzy-bottle.png" },
+    { id: "futen_bubble_gum", name: "Futen Bubble Gum", price: 0.5, img: "./assets/shelf/futen-bubble-gum.png" },
+    { id: "toffo", name: "Toffo", price: 0.5, img: "./assets/shelf/tofco.png" },
+    { id: "sourpunk", name: "Sourpunk", price: 0.75, img: "./assets/shelf/sourpunk.png" },
+    { id: "choco_rocco", name: "Choco Rocco", price: 1, img: "./assets/shelf/choco-rocco.png" },
+    { id: "choki_choki", name: "Choki Choki", price: 0.75, img: "./assets/shelf/choki-choki.png" },
+    { id: "choco_pound_cake", name: "Chocolate Pound Cake", price: 1.5, img: "./assets/shelf/chocolate-pound-cake.png" },
+    { id: "yan_yan", name: "Yan Yan", price: 1.25, img: "./assets/shelf/yan-yan.png" },
+    { id: "bubbly_candy", name: "Bubbly Candy", price: 0.5, img: "./assets/shelf/bubbly-candy.png" },
+    { id: "papy_snacks", name: "Papy Snacks", price: 1, img: "./assets/shelf/pypy-snacks.png" },
+    { id: "juicy_fruit", name: "Juicy Fruit", price: 0.5, img: "./assets/shelf/juicy-fruit.png" },
+    { id: "smarties_eight", name: "Smarties Eight", price: 0.75, img: "./assets/shelf/smarties-eight.png" },
+    { id: "milk_chews", name: "Milk Chews", price: 0.5, img: "./assets/shelf/milk-chews.png" },
+    { id: "pepero_funzels", name: "Pepero Funzels", price: 1.5, img: "./assets/shelf/pepero-funzels.png" },
+    { id: "quality_street", name: "Quality Street", price: 2, img: "./assets/shelf/quality-street.png" },
+    { id: "jewels_chocolates", name: "Jewels Chocolates", price: 2, img: "./assets/shelf/jewels-assorted-chocolates.png" },
+    { id: "hello_panda", name: "Hello Panda", price: 1.5, img: "./assets/shelf/hello-panda.png" },
+    { id: "magic_pops", name: "Magic Pops", price: 0.5, img: "./assets/shelf/magic-pops.png" },
+    { id: "chips_oman", name: "Chips Oman", price: 1, img: "./assets/shelf/chips-oman.png" },
+    { id: "canada_dry", name: "Canada Dry", price: 1.5, img: "./assets/fridge/canada-dry.png" },
+    { id: "star_mango", name: "Star Mango", price: 1.25, img: "./assets/fridge/star-mango.png" },
+    { id: "frenzy_drink", name: "Frenzy", price: 1, img: "./assets/fridge/frenzy.png" },
+    { id: "danao", name: "Danao", price: 1.5, img: "./assets/fridge/danao.png" },
+    { id: "bandung", name: "Bandung Milk", price: 1.5, img: "./assets/fridge/bandung-pink-milk.png" },
   ];
 
-  const SHELF_1 = SNACKS.slice(0, 6);
-  const SHELF_2 = SNACKS.slice(6, 12);
-  const SHELF_3 = SNACKS.slice(12, 19);
+  const FLOOR_SHOWCASE_IDS = [
+    "chipsticks",
+    "salad_chips",
+    "chips_oman",
+    "papy_snacks",
+    "funtime_fizzy_bottle",
+    "futen_bubble_gum",
+    "toffo",
+    "sourpunk",
+    "choco_rocco",
+    "choki_choki",
+    "choco_pound_cake",
+    "yan_yan",
+    "bubbly_candy",
+    "juicy_fruit",
+    "smarties_eight",
+    "milk_chews",
+    "pepero_funzels",
+    "quality_street",
+    "jewels_chocolates",
+    "hello_panda",
+    "magic_pops",
+  ];
+  const FLOOR_SHOWCASE_ITEMS = FLOOR_SHOWCASE_IDS.map((id) => SNACKS.find((item) => item.id === id)).filter(Boolean);
+  const FLOOR_SHOWCASE_ROWS = [
+    FLOOR_SHOWCASE_ITEMS.slice(0, 7),
+    FLOOR_SHOWCASE_ITEMS.slice(7, 14),
+    FLOOR_SHOWCASE_ITEMS.slice(14, 21),
+  ];
 
   const MEMORIES_END = [
     "That was always the one.",
@@ -345,17 +395,17 @@
 
   const MG_ITEMS = [
     { id: "chipsticks", img: BASE + "2dc4fdc49_1.png", label: "Chipsticks" },
-    { id: "vimto", img: BASE + "4cce014cf_13.png", label: "Areej Juice" },
-    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun" },
-    { id: "polo", img: BASE + "7e236964f_20.png", label: "Polo Mints" },
-    { id: "kinder", img: BASE + "f4b01209f_19.png", label: "Fun Fare" },
-    { id: "icecream", img: BASE + "0968e99e0_4.png", label: "Safari Grills" },
-    { id: "laban", img: BASE + "c51d107cf_17.png", label: "Fruit Shoot" },
-    { id: "pepsi", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice" },
-    { id: "gum", img: BASE + "626e806c3_8.png", label: "Qrakers" },
-    { id: "lollipop", img: BASE + "1cc097fc5_5.png", label: "Mazoon" },
-    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top" },
+    { id: "salad_chips", img: BASE + "52a18141c_2.png", label: "Salad Chips" },
     { id: "chips", img: BASE + "52a18141c_2.png", label: "Salad Chips" },
+    { id: "square_crisps", img: BASE + "9ae26c1fd_3.png", label: "Square Crisps" },
+    { id: "super_ring", img: BASE + "b7e1a3e31_7.png", label: "Super Ring" },
+    { id: "ali_baba", img: BASE + "0eb68be80_9.png", label: "Ali Baba" },
+    { id: "majid_crispy", img: BASE + "7ca857f36_6.png", label: "Majid Crispy" },
+    { id: "qrakers", img: BASE + "626e806c3_8.png", label: "Qrakers" },
+    { id: "oishi_prawns", img: BASE + "5ae7f1637_12.png", label: "Oishi Prawns" },
+    { id: "chips_oman", img: "./assets/shelf/chips-oman.png", label: "Chips Oman" },
+    { id: "papy_snacks", img: "./assets/shelf/pypy-snacks.png", label: "Papy Snacks" },
+    { id: "raja_chips", img: BASE + "2eb84a7f8_10.png", label: "Raja Chips" },
   ];
   const MG_SHOW = 5;
   const MG_SHOW_MS = 7000;
@@ -378,28 +428,31 @@
   const SQ_LEN = 5;
   const FRIDGE_DRINKS = [
     { img: BASE + "4cce014cf_13.png", label: "Areej", x: "8%", y: "8%" },
-    { img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "22%", y: "8%" },
-    { img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "36%", y: "8%" },
-    { img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "50%", y: "8%" },
-    { img: BASE + "2eb84a7f8_10.png", label: "Raja", x: "64%", y: "8%" },
-    { img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "78%", y: "8%" },
-    { img: BASE + "4cce014cf_13.png", label: "Areej", x: "8%", y: "55%" },
-    { img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "22%", y: "55%" },
-    { img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "36%", y: "55%" },
-    { img: BASE + "2eb84a7f8_10.png", label: "Raja", x: "50%", y: "55%" },
-    { img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "64%", y: "55%" },
-    { img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "78%", y: "55%" },
+    { img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "26%", y: "8%" },
+    { img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "44%", y: "8%" },
+    { img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "62%", y: "8%" },
+    { img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "80%", y: "8%" },
+    { img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "8%", y: "55%" },
+    { img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "22%", y: "55%" },
+    { img: "./assets/fridge/frenzy.png", label: "Frenzy", x: "36%", y: "55%" },
+    { img: "./assets/fridge/danao.png", label: "Danao", x: "50%", y: "55%" },
+    { img: "./assets/fridge/bandung-pink-milk.png", label: "Bandung Milk", x: "64%", y: "55%" },
   ];
   const CANDY_SHELF_IMGS = [
-    BASE + "fdd82f4e1_16.png",
-    BASE + "52a18141c_2.png",
-    BASE + "f4b01209f_19.png",
-    BASE + "4cce014cf_13.png",
     BASE + "2dc4fdc49_1.png",
-    BASE + "7e236964f_20.png",
+    BASE + "52a18141c_2.png",
+    BASE + "9ae26c1fd_3.png",
+    BASE + "0968e99e0_4.png",
+    BASE + "7ca857f36_6.png",
+    BASE + "b7e1a3e31_7.png",
+    BASE + "626e806c3_8.png",
+    BASE + "0eb68be80_9.png",
+    BASE + "5ae7f1637_12.png",
+    "./assets/shelf/chips-oman.png",
+    "./assets/shelf/pypy-snacks.png",
   ];
-  const CANDY_TARGET = BASE + "34a5a4045_15.png";
-  const CANDY_QUOTE = "It was on the top shelf.\nYou weren't tall enough.\nYou jumped anyway.";
+  const CANDY_TARGET = "./assets/shelf/chips-oman.png";
+  const CANDY_QUOTE = "It was on the top shelf.\nYou weren't tall enough.\nYou jumped for the chips anyway.";
   const FRIDGE_QUOTE = "You pressed your forehead against the glass.\nThe fog cleared just enough to see what was inside.";
   const REMEMBER_THINGS = [
     { text: "the juice box you always picked", x: "10%", y: "18%", size: "lg", delay: 0.5 },
@@ -1134,7 +1187,21 @@
         transition: "bottom 0.05s linear",
       },
     });
-    if (st.candyH > 0.6) charWrap.appendChild(h("div", "", { style: { fontSize: "1.5rem", lineHeight: 1, transform: `scaleY(${0.5 + st.candyH * 0.8})`, transformOrigin: "bottom" } }, ["\u{1F590}\u{FE0F}"]));
+    if (st.candyGrab) {
+      charWrap.appendChild(
+        h("img", "", {
+          src: CANDY_TARGET,
+          alt: "grabbed chips",
+          style: {
+            width: "40px",
+            height: "40px",
+            objectFit: "contain",
+            marginBottom: "2px",
+            filter: "drop-shadow(0 0 8px rgba(255,215,0,0.5))",
+          },
+        })
+      );
+    }
     charWrap.appendChild(h("div", "", { style: { fontSize: "42px", lineHeight: 1 } }, ["\u{1F9CD}\u{200D}\u{2640}\u{FE0F}"]));
     charWrap.appendChild(
       h("div", "", {
@@ -1153,11 +1220,6 @@
     play.appendChild(
       h("div", "", { style: { position: "absolute", left: 0, right: 0, bottom: 0, height: "48px", background: "linear-gradient(0deg, rgba(10,5,25,0.9) 0%, transparent 100%)" } })
     );
-    if (st.candyGrab) {
-      const spark = h("div", "", { style: { position: "absolute", top: "4rem", left: "50%", transform: "translateX(-50%)", zIndex: 30, textAlign: "center", pointerEvents: "none" } });
-      spark.appendChild(h("img", "", { src: CANDY_TARGET, alt: "candy", style: { width: "56px", height: "56px", objectFit: "contain" } }));
-      play.appendChild(spark);
-    }
     wrap.appendChild(play);
     const instr = h("div", "", { style: { position: "relative", zIndex: 20, marginBottom: "1.25rem", textAlign: "center", pointerEvents: "none", flexShrink: 0 } });
     if (!st.candyDone && st.candyHint) {
@@ -2502,11 +2564,11 @@
           h("div", "", {
             style: {
               position: "absolute",
-              inset: "-8px",
+              inset: "-6px",
               borderRadius: "16px",
               pointerEvents: "none",
-              background: "radial-gradient(ellipse 85% 90% at 50% 45%, rgba(255,215,0,0.26) 0%, rgba(255,200,80,0.08) 52%, transparent 72%)",
-              boxShadow: "0 0 28px rgba(255,215,0,0.32), 0 0 56px rgba(255,215,0,0.1)",
+              background: "radial-gradient(ellipse 80% 85% at 50% 45%, rgba(255,215,0,0.2) 0%, rgba(255,200,80,0.06) 50%, transparent 72%)",
+              boxShadow: "0 0 18px rgba(255,215,0,0.2)",
             },
           })
         );
@@ -2543,25 +2605,6 @@
           [snack.name]
         )
       );
-      if (sel) {
-        const badge = h("div", "", {
-          style: {
-            position: "absolute",
-            top: "-4px",
-            right: "-4px",
-            width: "16px",
-            height: "16px",
-            borderRadius: "9999px",
-            background: "linear-gradient(145deg, #ffe566, #c9a227)",
-            boxShadow: "0 0 10px rgba(255,215,0,0.45)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-        });
-        badge.appendChild(h("span", "", { style: { color: "#2a1f08", fontSize: "8px", fontWeight: 700 } }, ["\u2713"]));
-        btn.appendChild(badge);
-      }
       tray.appendChild(btn);
     });
     row.appendChild(tray);
@@ -2641,7 +2684,7 @@
         )
       );
     }
-    const scroll = h("div", "baqala-scroll", { style: { flex: 1, overflowY: "auto", minHeight: 0, padding: "0.5rem", paddingTop: "0.75rem", position: "relative" } });
+    const scroll = h("div", "baqala-scroll", { style: { flex: 1, overflowY: "hidden", minHeight: 0, padding: "0.5rem", paddingTop: "0.75rem", position: "relative" } });
     scroll.appendChild(
       h("div", "", {
         style: {
@@ -2657,9 +2700,9 @@
       h("span", "font-heading neon-flicker-blue", { style: { fontSize: "9px", letterSpacing: "0.4em", color: EYEBROW_GOLD, textTransform: "uppercase" } }, ["- snacks & drinks -"])
     );
     scroll.appendChild(signWrap);
-    scroll.appendChild(shelfRow(SHELF_1, onPick));
-    scroll.appendChild(shelfRow(SHELF_2, onPick));
-    scroll.appendChild(shelfRow(SHELF_3, onPick));
+    FLOOR_SHOWCASE_ROWS.forEach((rowItems) => {
+      if (rowItems.length) scroll.appendChild(shelfRow(rowItems, onPick));
+    });
     wrap.appendChild(scroll);
     const counter = h("div", "", {
       style: {
@@ -3114,10 +3157,10 @@
             flexDirection: "column",
             alignItems: "center",
             gap: "0.5rem",
-            padding: "1rem",
+            padding: "0.75rem",
             borderRadius: "1rem",
-            border: "1px solid rgba(255,255,255,0.12)",
-            background: "rgba(255,255,255,0.05)",
+            border: "none",
+            background: "transparent",
             cursor: "pointer",
             color: "#fff",
           },
@@ -3131,7 +3174,19 @@
             }, 2800);
           },
         });
-        btn.appendChild(h("img", "", { src: snack.img, alt: snack.name, style: { width: "4rem", height: "4rem", objectFit: "contain" } }));
+        const snackGlow = h("div", "", {
+          style: {
+            width: "5.25rem",
+            height: "5.25rem",
+            borderRadius: "9999px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "radial-gradient(circle, rgba(255,215,0,0.22) 0%, rgba(255,215,0,0.08) 45%, rgba(255,215,0,0) 75%)",
+          },
+        });
+        snackGlow.appendChild(h("img", "", { src: snack.img, alt: snack.name, style: { width: "4rem", height: "4rem", objectFit: "contain", filter: "drop-shadow(0 0 12px rgba(255,215,0,0.22))" } }));
+        btn.appendChild(snackGlow);
         btn.appendChild(
           h("span", "font-heading", { style: { fontSize: "9px", color: "rgba(255,255,255,0.55)", textAlign: "center", lineHeight: 1.2, textTransform: "uppercase", letterSpacing: "0.05em" } }, [
             snack.name,
