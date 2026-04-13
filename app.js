@@ -2874,6 +2874,138 @@
     return wrap;
   }
 
+  function renderFridgeShop() {
+    startFridgeHum();
+    onCleanup(() => stopFridgeHum());
+    const remaining = +(st.budget - st.floorSpent).toFixed(2);
+    const canCheckout = st.floorPick.length > 0;
+    const onPick = (drink) => {
+      playProductPick();
+      const already = st.floorPick.find((p) => p.id === drink.id);
+      if (already) {
+        st.floorPick = st.floorPick.filter((p) => p.id !== drink.id);
+        st.floorSpent = +(st.floorSpent - drink.price).toFixed(2);
+        render();
+        return;
+      }
+      if (+(st.floorSpent + drink.price).toFixed(2) > st.budget) return;
+      st.floorPick = [...st.floorPick, drink];
+      st.floorSpent = +(st.floorSpent + drink.price).toFixed(2);
+      render();
+    };
+    const wrap = h("div", "", {
+      style: { position: "fixed", inset: 0, display: "flex", flexDirection: "column", overflow: "hidden", background: "linear-gradient(180deg, #0d0822 0%, #1a0f40 60%, #2D1B69 100%)" },
+    });
+    const head = h("div", "", {
+      style: {
+        position: "relative",
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0.6rem 1rem",
+        background: "rgba(13,8,34,0.9)",
+        borderBottom: "1px solid rgba(0,209,255,0.2)",
+      },
+    });
+    head.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.85rem", letterSpacing: "0.06em", color: "#9feeff", textTransform: "uppercase" } }, ["Fridge"]);
+    const actions = h("div", "", { style: { display: "flex", gap: "0.4rem", alignItems: "center" } });
+    actions.appendChild(h("p", "font-heading", { style: { margin: 0, fontSize: "0.8rem", color: remaining < 1 ? "#FF2E63" : "#FFD700" } }, [`${remaining} AED`]));
+    actions.appendChild(
+      h("button", "font-heading", {
+        style: { padding: "0.45rem 0.8rem", borderRadius: "9999px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.65rem", textTransform: "uppercase", cursor: "pointer" },
+        onclick: () => setPhase(PHASES.FLOOR),
+      }, ["Go to Shelves"])
+    );
+    actions.appendChild(
+      h("button", "font-heading", {
+        style: { padding: "0.45rem 0.8rem", borderRadius: "9999px", border: "none", background: "linear-gradient(135deg,#FF2E63,#7B2FF2)", color: "#fff", fontSize: "0.65rem", textTransform: "uppercase", cursor: canCheckout ? "pointer" : "not-allowed", opacity: canCheckout ? 1 : 0.45 },
+        disabled: !canCheckout,
+        onclick: () => {
+          st.picks = st.floorPick.slice();
+          setPhase(PHASES.RECEIPT);
+        },
+      }, ["Checkout"])
+    );
+    head.appendChild(actions);
+    wrap.appendChild(head);
+
+    const body = h("div", "", { style: { position: "relative", flex: 1, padding: "1rem", display: "flex", alignItems: "center", justifyContent: "center" } });
+    const door = h("div", "", { style: { position: "relative", width: "min(92vw, 560px)", height: "min(48vw, 280px)" } });
+    const inner = h("div", "", { style: { position: "absolute", inset: 0, borderRadius: "1rem", overflow: "hidden", background: "linear-gradient(180deg, #0a1a2a 0%, #061018 100%)", border: "2px solid rgba(0,209,255,0.25)" } });
+    FRIDGE_DRINKS.forEach((d) => {
+      const selected = st.floorPick.some((p) => p.id === d.id);
+      const item = { id: d.id, name: d.label, img: d.img, price: FRIDGE_PRICE_BY_ID[d.id] ?? 1 };
+      const btn = h("button", "", {
+        type: "button",
+        style: {
+          position: "absolute",
+          left: d.x,
+          top: d.y,
+          transform: "translate(-50%, -50%)",
+          border: "none",
+          background: selected ? "radial-gradient(circle, rgba(255,215,0,0.2), transparent 65%)" : "transparent",
+          padding: "0.25rem",
+          cursor: st.fridgeOpen ? "pointer" : "default",
+          opacity: st.fridgeOpen ? 1 : 0.85,
+        },
+        onclick: () => st.fridgeOpen && onPick(item),
+      });
+      btn.appendChild(h("img", "", { src: d.img, alt: d.label, style: { width: "38px", height: "38px", objectFit: "contain", filter: "brightness(0.95) drop-shadow(0 2px 4px rgba(0,0,0,0.5))" } }));
+      inner.appendChild(btn);
+    });
+    door.appendChild(inner);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 560;
+    canvas.height = 280;
+    Object.assign(canvas.style, { position: "absolute", inset: 0, width: "100%", height: "100%", borderRadius: "1rem", zIndex: "10", display: st.fridgeOpen ? "none" : "block", cursor: "crosshair" });
+    const ctx2 = canvas.getContext("2d");
+    ctx2.fillStyle = "rgba(200,230,255,0.82)";
+    ctx2.fillRect(0, 0, canvas.width, canvas.height);
+    const handleMove = (e) => {
+      if (st.fridgeOpen) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = ((e.clientX ?? e.touches?.[0]?.clientX) - rect.left) * (canvas.width / rect.width);
+      const y = ((e.clientY ?? e.touches?.[0]?.clientY) - rect.top) * (canvas.height / rect.height);
+      ctx2.globalCompositeOperation = "destination-out";
+      ctx2.beginPath();
+      ctx2.arc(x, y, 28, 0, Math.PI * 2);
+      ctx2.fill();
+      const data = ctx2.getImageData(0, 0, canvas.width, canvas.height).data;
+      let transparent = 0;
+      for (let i = 3; i < data.length; i += 4) if (data[i] < 128) transparent++;
+      st.fridgeClr = Math.round((transparent / (canvas.width * canvas.height)) * 100);
+    };
+    canvas.addEventListener("pointermove", handleMove);
+    onCleanup(() => canvas.removeEventListener("pointermove", handleMove));
+    door.appendChild(canvas);
+
+    const pane = h("div", "", {
+      style: { position: "absolute", inset: 0, zIndex: 12, borderRadius: "1rem", background: "transparent", cursor: st.fridgeOpen ? "pointer" : "default" },
+      onclick: () => {
+        if (st.fridgeOpen) {
+          st.fridgeOpen = false;
+          render();
+        }
+      },
+    });
+    if (st.fridgeOpen) door.appendChild(pane);
+    const handle = h("div", "", {
+      style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: st.fridgeClr >= 25 ? "pointer" : "not-allowed" },
+      onclick: () => {
+        if (st.fridgeClr >= 25) {
+          st.fridgeOpen = !st.fridgeOpen;
+          render();
+        }
+      },
+    });
+    door.appendChild(handle);
+    body.appendChild(door);
+    wrap.appendChild(body);
+    return wrap;
+  }
+
   function receiptSnackLine(snack) {
     const line = h("div", "", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" } });
     const left = h("div", "", { style: { display: "flex", alignItems: "center", gap: "0.5rem" } });
