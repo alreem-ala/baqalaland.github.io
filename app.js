@@ -55,7 +55,7 @@
   const INTRO_LINES = [
     "In the corner of our neighborhoods stood the baqala, a world entered through smudged plastic curtains and defined by the rhythmic hum of a cooling fridge.",
     "It is not remembered through a single event, but through patterns: choosing a snack, counting coins, knowing which shelf to check.",
-    "Baqalaland invites you into the heart of our collective memory, offering glimpses of the small things that shaped us. Here, your wins become your budget, allowing you to (re)visit the snacks that once shaped our childhoods.",
+    "Baqalaland invites you into the heart of our collective memory, offering glimpses of the small things that shaped us. Here, your small wins become your budget, allowing you to (re)visit the snacks that once shaped our childhoods.",
   ];
 
   const SNACKS = [
