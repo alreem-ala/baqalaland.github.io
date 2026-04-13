@@ -42,7 +42,7 @@
     { size: 122, top: 24, left: 40, op: 0.76, parallax: 0.4, drift: 16, driftDur: 26 },
     { size: 190, top: 2, left: -4, op: 0.7, parallax: 0.44, drift: 30, driftDur: 21 },
     { size: 145, top: 8, left: 88, op: 0.65, parallax: 0.32, drift: -20, driftDur: 17 },
-    { size: 105, top: 2, left: 70, op: 0.55, parallax: 0.2, drift: 18, driftDur: 23 },
+    { size: 105, top: , left: 70, op: 0.55, parallax: 0.2, drift: 18, driftDur: 23 },
     { size: 170, top: 18, left: -6, op: 0.8, parallax: 0.58, drift: 26, driftDur: 28 },
     { size: 130, top: 20, left: 92, op: 0.6, parallax: 0.38, drift: -22, driftDur: 15 },
   ];
@@ -55,7 +55,7 @@
   const INTRO_LINES = [
     "In the corner of our neighborhoods stood the baqala, a world entered through smudged plastic curtains and defined by the rhythmic hum of a cooling fridge.",
     "It is not remembered through a single event, but through patterns:\nchoosing a snack, counting coins, knowing which shelf to check.",
-    "Baqalaland invites you into the heart of our collective memory, offering glimpses of the small things that shaped us. Here, your daily wins become your budget, allowing you to (re)visit the snacks that once shaped our childhoods.",
+    "Baqalaland invites you into the heart of our collective memory, offering glimpses of the small things that shaped us. Here, your wins become your budget, allowing you to (re)visit the snacks that once shaped our childhoods.",
   ];
 
   const SNACKS = [
