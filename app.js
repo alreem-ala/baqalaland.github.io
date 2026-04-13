@@ -54,7 +54,7 @@
 
   const INTRO_LINES = [
     "In the corner of our neighborhoods stood the baqala, a world entered through smudged plastic curtains and defined by the rhythmic hum of a cooling fridge.",
-    "It is not remembered through a single event, but through patterns: choosing a snack, counting coins, knowing which shelf to check.",
+    "It is not remembered through a single event, but through patterns:\nchoosing a snack, counting coins, knowing which shelf to check.",
     "Baqalaland invites you into the heart of our collective memory, offering glimpses of the small things that shaped us. Here, your daily wins become your budget, allowing you to (re)visit the snacks that once shaped our childhoods.",
   ];
 
@@ -422,7 +422,7 @@
     const style = document.createElement("style");
     style.id = CLOUD_DRIFT_STYLE_ID;
     style.textContent =
-      "@keyframes baqalaCloudDrift{0%{transform:translateX(var(--base-shift))}50%{transform:translateX(calc(var(--base-shift) + var(--cloud-drift)))}100%{transform:translateX(var(--base-shift))}}";
+      "@keyframes baqalaCloudDrift{0%{transform:translateX(0)}50%{transform:translateX(var(--cloud-drift))}100%{transform:translateX(0)}}";
     document.head.appendChild(style);
   }
   const REMEMBER_BUBBLE_STYLE_ID = "baqala-remember-bubble-keyframes";
@@ -796,7 +796,7 @@
     const titleOpacity = Math.max(0, 1 - phase1 * 3);
     const introOpacity = phase2;
     const awningTop = Math.max(-18, 100 - p * 118);
-    const cloudShift = p * 200;
+    const cloudShift = p * 260;
     const wrap = h("div", "", { style: { position: "fixed", inset: 0, overflow: "hidden" } });
     wrap.appendChild(
       h("div", "", {
@@ -825,12 +825,13 @@
           left: `${c.left}%`,
           width: `${c.size}px`,
           opacity: c.op,
+          transform: `translateX(${(cloudShift * c.parallax).toFixed(2)}px)`,
+          willChange: "transform",
         },
       });
       const driftWrap = h("div", "", {
         style: {
           width: "100%",
-          "--base-shift": `${(cloudShift * c.parallax).toFixed(2)}px`,
           "--cloud-drift": `${c.drift || 0}px`,
           animation: `baqalaCloudDrift ${c.driftDur || 20}s ease-in-out infinite`,
         },
@@ -964,6 +965,7 @@
               fontSize: "clamp(0.875rem, 2vw, 1.125rem)",
               color: "rgba(24,55,92,0.95)",
               lineHeight: 1.375,
+              whiteSpace: "pre-line",
               opacity: vis,
               transform: `translateY(${ty}px) scale(${scale})`,
               filter: `blur(${blur}px)`,
