@@ -45,7 +45,11 @@
     { size: 105, top: 1, left: 70, op: 0.55, parallax: 0.2, drift: 18, driftDur: 23 },
     { size: 170, top: 18, left: -6, op: 0.8, parallax: 0.58, drift: 26, driftDur: 28 },
     { size: 130, top: 20, left: 92, op: 0.6, parallax: 0.38, drift: -22, driftDur: 15 },
+    { size: 118, top: 6, left: 18, op: 0.48, parallax: 0.24, drift: 14, driftDur: 18 },
+    { size: 154, top: 26, left: 52, op: 0.52, parallax: 0.34, drift: -18, driftDur: 24 },
+    { size: 168, top: 5, left: -10, op: 0.58, parallax: 0.4, drift: 20, driftDur: 25 },
   ];
+  const CLOUD_SIZE_MULTIPLIER = 1.34;
 
   const BALLS = [
     { size: 82, top: 72, pad: 20, yM: 130, Rpx: 30, riseVh: 14, r: 340, delay: 0, duration: 18 },
@@ -162,9 +166,16 @@
   ];
 
   const CLOSING_LINES = [
-    "Nostalgia looks different for everyone.",
+    "Nostalgia is shared, even when memories aren't",
     "We are glad to share a few of the memories that are instilled in us, and we hope they echoed something familiar in you.",
     "Thank you for spending this visit with us in Baqalaland.",
+  ];
+  const ENDING_QUESTIONS = [
+    "What would you eat first?",
+    "Which would you share with your sibling?",
+    "Which will you save for later?",
+    "Which will you try again?",
+    "Which is your favorite?",
   ];
   const VILLA_DESCRIPTIONS = [
     "the villa across the street",
@@ -188,6 +199,12 @@
     else if (st.spHits >= 2) base = 1;
     const missPenalty = Math.floor(st.spMiss / 2);
     return Math.max(0, base - missPenalty);
+  }
+  function pickNextSpeedTargetIdx(prevIdx = -1) {
+    if (SP_TARGETS.length <= 1) return 0;
+    let idx = Math.floor(Math.random() * SP_TARGETS.length);
+    if (idx === prevIdx) idx = (idx + 1 + Math.floor(Math.random() * (SP_TARGETS.length - 1))) % SP_TARGETS.length;
+    return idx;
   }
 
   // Audio (ported from src/lib/audioEngine.js)
@@ -444,7 +461,7 @@
     const style = document.createElement("style");
     style.id = BAG_DROP_STYLE_ID;
     style.textContent =
-      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-88vh) scale(0.82) rotate(-12deg)}18%{opacity:1}52%{opacity:1;transform:translateY(12px) scale(1.04) rotate(5deg)}78%{opacity:.82;transform:translateY(-6px) scale(0.98) rotate(-2deg)}100%{opacity:.62;transform:translateY(0) scale(1) rotate(0deg)}}@keyframes bagWeightSettle{0%{transform:translateY(0) scaleY(1)}35%{transform:translateY(2px) scaleY(0.992)}62%{transform:translateY(7px) scaleY(0.975)}78%{transform:translateY(4px) scaleY(0.984)}100%{transform:translateY(0) scaleY(1)}}@keyframes bagPourTilt{0%{transform:rotate(180deg) translateY(-10px)}30%{transform:rotate(183deg) translateY(-7px)}60%{transform:rotate(176deg) translateY(-4px)}100%{transform:rotate(180deg) translateY(0)}}@keyframes snackPourOut{0%{opacity:0;transform:translateY(-10px) scale(0.9) rotate(-8deg)}14%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translateY(118px) scale(1) rotate(0deg)}}@keyframes endingQuestionIn{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}";
+      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-88vh) scale(0.82) rotate(-12deg)}18%{opacity:1}52%{opacity:1;transform:translateY(12px) scale(1.04) rotate(5deg)}78%{opacity:.9;transform:translateY(-6px) scale(0.98) rotate(-2deg)}100%{opacity:.78;transform:translateY(0) scale(1) rotate(0deg)}}@keyframes bagWeightSettle{0%{transform:translateY(0) scaleY(1)}35%{transform:translateY(2px) scaleY(0.992)}62%{transform:translateY(7px) scaleY(0.975)}78%{transform:translateY(4px) scaleY(0.984)}100%{transform:translateY(0) scaleY(1)}}@keyframes bagPourTilt{0%{transform:rotate(180deg) translateY(-10px)}30%{transform:rotate(183deg) translateY(-7px)}60%{transform:rotate(176deg) translateY(-4px)}100%{transform:rotate(180deg) translateY(0)}}@keyframes snackPourOut{0%{opacity:0;transform:translateY(-10px) scale(0.9) rotate(-8deg)}14%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translateY(118px) scale(1) rotate(0deg)}}@keyframes endingQuestionIn{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}";
     document.head.appendChild(style);
   }
   const COLOR_SHIFT_STYLE_ID = "baqala-color-shift-keyframes";
@@ -635,6 +652,8 @@
     spHits: 0,
     spMiss: 0,
     spTargetsSpawned: 0,
+    spTargetIdx: 0,
+    spRoundCount: 0,
     spUid: 0,
     spTimer: null,
     spSpawn: null,
@@ -672,6 +691,7 @@
     endSub: "bag",
     endChosen: null,
     endReady: false,
+    endQIdx: 0,
     narrative: null,
     candyRaf: null,
     candyH: 0,
@@ -746,6 +766,8 @@
       st.spHits = 0;
       st.spMiss = 0;
       st.spTargetsSpawned = 0;
+      st.spTargetIdx = pickNextSpeedTargetIdx();
+      st.spRoundCount = 0;
       st.spUid = 0;
       if (st.spTimer) clearInterval(st.spTimer);
       if (st.spSpawn) clearInterval(st.spSpawn);
@@ -796,6 +818,7 @@
       st.endSub = "bag";
       st.endChosen = null;
       st.endReady = false;
+      st.endQIdx = 0;
     }
     render();
   }
@@ -820,6 +843,7 @@
     st.floorSpent = 0;
     st.floorOver = false;
     st.endReady = false;
+    st.endQIdx = 0;
     st.brStarted = false;
     st.brCount = 0;
     st.brDone = false;
@@ -911,7 +935,7 @@
           position: "absolute",
           top: `${c.top}%`,
           left: `${c.left}%`,
-          width: `${c.size}px`,
+          width: `${Math.round(c.size * CLOUD_SIZE_MULTIPLIER)}px`,
           opacity: c.op,
           transform: `translateX(${(cloudShift * c.parallax).toFixed(2)}px)`,
           willChange: "transform",
@@ -1097,13 +1121,13 @@
     }
     wrap.appendChild(introWrap);
     const awningWrap = h("div", "", {
-      style: { position: "absolute", insetInline: 0, zIndex: 20, pointerEvents: "none", top: `${awningTop}%`, transition: "top 0.05s linear" },
+      style: { position: "absolute", left: "50%", width: "112vw", transform: "translateX(-50%)", zIndex: 20, pointerEvents: "none", top: `${awningTop}%`, transition: "top 0.05s linear" },
     });
     awningWrap.appendChild(
       h("img", "", {
         src: AWNING_IMG,
         alt: "Baqala awning",
-        style: { display: "block", width: "100%", height: "clamp(140px, 32vh, 320px)", objectFit: "cover", objectPosition: "bottom center" },
+        style: { display: "block", width: "112vw", maxWidth: "none", height: "clamp(165px, 36vh, 360px)", objectFit: "cover", objectPosition: "bottom center" },
       })
     );
     wrap.appendChild(awningWrap);
@@ -1855,10 +1879,10 @@
             disabled: st.mgSel.length === 0,
             onclick: () => {
               const correct = st.mgSel.filter((id) => st.mgTarget.some((t) => t.id === id)).length;
-              const s = correct >= 5 ? 3 : correct >= 3 ? 2 : correct >= 1 ? 1 : 0;
+              const s = correct >= 5 ? 4 : correct >= 4 ? 3 : correct >= 3 ? 2 : correct >= 1 ? 1 : 0;
               st.mgScore = { correct, s };
               st.mgPhase = "result";
-              if (s === 3) playFound();
+              if (s >= 3) playFound();
               else playLand();
               render();
               setTimeout(() => {
@@ -1869,6 +1893,7 @@
                   setPhase(PHASES.BUDGET);
                 } else {
                   st.spPhase = "intro";
+                  st.spTargetIdx = pickNextSpeedTargetIdx(st.spTargetIdx);
                   render();
                 }
               }, 2000);
@@ -1899,6 +1924,8 @@
   }
 
   function renderSpeedGame() {
+    const speedPreviewTarget = SP_TARGETS[st.spTargetIdx] || SP_TARGETS[0];
+    const speedActiveTarget = SP_TARGETS[st.spTargetIdx] || SP_TARGETS[0];
     const wrap = h("div", "", { style: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", overflow: "hidden" } });
     wrap.appendChild(h("div", "", { style: { position: "absolute", inset: 0, background: "linear-gradient(180deg, #0d0822 0%, #1a0f40 100%)" } }));
     if (st.spPhase === "intro") {
@@ -1921,8 +1948,8 @@
       );
       box.appendChild(
         h("img", "", {
-          src: SP_TARGETS[0].img,
-          alt: "Areej",
+          src: speedPreviewTarget.img,
+          alt: speedPreviewTarget.label,
           style: {
             width: "5rem",
             height: "5rem",
@@ -1936,11 +1963,16 @@
         })
       );
       box.appendChild(
-        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "1.5rem", color: "#fff", textAlign: "center", textTransform: "uppercase", marginBottom: "0.75rem" } }, ["Grab the Areej"])
+        h(
+          "h2",
+          "font-heading",
+          { style: { fontWeight: 700, fontSize: "1.5rem", color: "#fff", textAlign: "center", textTransform: "uppercase", marginBottom: "0.75rem" } },
+          [`Grab the ${speedPreviewTarget.label}`]
+        )
       );
       box.appendChild(
         h("p", "font-body", { style: { fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", fontStyle: "italic", textAlign: "center", maxWidth: "20rem", marginBottom: "0.5rem" } }, [
-          "Tap Areej Juice as fast as you can. Ignore everything else.",
+          `Tap ${speedPreviewTarget.label} as fast as you can. Ignore everything else.`,
         ])
       );
       box.appendChild(
@@ -1990,7 +2022,10 @@
               }, 1000);
               st.spSpawn = setInterval(() => {
                 const isTarget = Math.random() < 0.45;
-                const item = isTarget ? SP_TARGETS[0] : SP_TARGETS[1 + Math.floor(Math.random() * (SP_TARGETS.length - 1))];
+                const targetIdx = st.spTargetIdx;
+                const nonTargets = SP_TARGETS.filter((_, idx) => idx !== targetIdx);
+                const baseItem = isTarget ? SP_TARGETS[targetIdx] : nonTargets[Math.floor(Math.random() * nonTargets.length)];
+                const item = { ...baseItem, isTarget };
                 const id = st.spUid++;
                 const pos = { x: 8 + Math.random() * 72, y: 28 + Math.random() * 42 };
                 if (isTarget) st.spTargetsSpawned += 1;
@@ -2040,7 +2075,9 @@
       hud.appendChild(hudR);
       wrap.appendChild(hud);
       const hintWrap = h("div", "", { style: { position: "absolute", bottom: "1.25rem", left: 0, right: 0, textAlign: "center", zIndex: 20, pointerEvents: "none" } });
-      hintWrap.appendChild(h("p", "font-body", { style: { fontSize: "0.75rem", color: "rgba(255,255,255,0.2)", fontStyle: "italic", margin: 0 } }, ["Tap Areej Juice only"]));
+      hintWrap.appendChild(
+        h("p", "font-body", { style: { fontSize: "0.75rem", color: "rgba(255,255,255,0.2)", fontStyle: "italic", margin: 0 } }, [`Tap ${speedActiveTarget.label} only`])
+      );
       wrap.appendChild(hintWrap);
       const drawOrder = [...st.spItems].sort((a, b) => (a.isTarget ? 1 : 0) - (b.isTarget ? 1 : 0));
       drawOrder.forEach((item) => {
@@ -2124,12 +2161,13 @@
     } else if (st.spPhase === "result" && st.spResultAed != null) {
       const aed = st.spResultAed;
       const hits = st.spHits;
+      const resultTarget = SP_TARGETS[st.spTargetIdx] || SP_TARGETS[0];
       const grabbedLine =
         hits === 0
-          ? "No Areej taps this round."
+          ? `No ${resultTarget.label} taps this round.`
           : hits === 1
-            ? "You grabbed Areej once."
-            : `You grabbed Areej ${hits} times.`;
+            ? `You grabbed ${resultTarget.label} once.`
+            : `You grabbed ${resultTarget.label} ${hits} times.`;
       const box = h("div", "", {
         style: {
           position: "absolute",
@@ -2177,6 +2215,7 @@
               st.quizScores.push(aed);
               st.spResultAed = null;
               st.spPhase = "intro";
+              st.spTargetIdx = pickNextSpeedTargetIdx(st.spTargetIdx);
               st.quizGameIndex += 1;
               if (st.quizGameIndex >= 3) {
                 applyBudgetFromQuizScores();
@@ -3636,12 +3675,12 @@
       snacksLayer.style.gridAutoRows = picksShown.length > 9 ? "2.2rem" : picksShown.length > 6 ? "2.8rem" : "3.2rem";
       const snackSize =
         picksShown.length <= 1
-          ? "clamp(5.4rem, 30vw, 7.2rem)"
+          ? "clamp(6rem, 33vw, 8rem)"
           : picksShown.length <= 4
-          ? "clamp(4.1rem, 18vw, 5rem)"
+          ? "clamp(4.6rem, 21vw, 5.7rem)"
           : picksShown.length <= 8
-          ? "clamp(2.8rem, 11.5vw, 3.4rem)"
-          : "clamp(1.9rem, 7.2vw, 2.4rem)";
+          ? "clamp(3.3rem, 13vw, 4rem)"
+          : "clamp(2.3rem, 8.5vw, 2.8rem)";
       picksShown.forEach((snack, i) => {
         snacksLayer.appendChild(
           h("img", "", {
@@ -3672,7 +3711,7 @@
             position: "relative",
             zIndex: 2,
             pointerEvents: "none",
-            opacity: 0.84,
+            opacity: 0.58,
             transformOrigin: "50% 100%",
             animation: `bagWeightSettle ${bagWeightDur} ease-in-out both`,
           },
@@ -3737,19 +3776,24 @@
       );
       wrap.appendChild(box);
     } else if (st.endSub === "choose") {
+      const qTick = setInterval(() => {
+        if (st.phase !== PHASES.ENDING || st.endSub !== "choose") return;
+        st.endQIdx = (st.endQIdx + 1) % ENDING_QUESTIONS.length;
+        render();
+      }, 2200);
+      onCleanup(() => clearInterval(qTick));
       const box = h("div", "", { style: { display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", width: "100%", maxWidth: "36rem", padding: "0 1rem" } });
       box.appendChild(
         h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "1rem" } }, ["the real question"])
       );
       box.appendChild(
-        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.5rem, 5vw, 1.875rem)", color: "#fff", marginBottom: "0.5rem" } }, ["What will you have first?"])
-      );
-      box.appendChild(
-        h("p", "font-body", { style: { fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", fontStyle: "italic", marginBottom: "2rem" } }, ["Tap one. Be honest with yourself."])
+        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.5rem, 5vw, 1.875rem)", color: "#fff", marginBottom: "0.5rem", animation: "endingQuestionIn 0.35s ease-out both" } }, [
+          ENDING_QUESTIONS[st.endQIdx],
+        ])
       );
       const grid = h("div", "", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", width: "100%", padding: "0 0.5rem" } });
       st.picks.forEach((snack) => {
-        const btn = h("button", "font-heading", {
+        const card = h("div", "font-heading", {
           style: {
             display: "flex",
             flexDirection: "column",
@@ -3759,17 +3803,7 @@
             borderRadius: "1rem",
             border: "none",
             background: "transparent",
-            cursor: "pointer",
             color: "#fff",
-          },
-          onclick: () => {
-            st.endChosen = snack;
-            st.endSub = "reveal";
-            render();
-            setTimeout(() => {
-              st.endSub = "end";
-              render();
-            }, 2800);
           },
         });
         const snackGlow = h("div", "", {
@@ -3784,15 +3818,42 @@
           },
         });
         snackGlow.appendChild(h("img", "", { src: snack.img, alt: snack.name, style: { width: "4rem", height: "4rem", objectFit: "contain", filter: "drop-shadow(0 0 12px rgba(255,215,0,0.22))" } }));
-        btn.appendChild(snackGlow);
-        btn.appendChild(
+        card.appendChild(snackGlow);
+        card.appendChild(
           h("span", "font-heading", { style: { fontSize: "9px", color: "rgba(255,255,255,0.55)", textAlign: "center", lineHeight: 1.2, textTransform: "uppercase", letterSpacing: "0.05em" } }, [
             snack.name,
           ])
         );
-        grid.appendChild(btn);
+        grid.appendChild(card);
       });
       box.appendChild(grid);
+      box.appendChild(
+        h(
+          "button",
+          "font-heading",
+          {
+            style: {
+              marginTop: "1.4rem",
+              padding: "0.75rem 2rem",
+              borderRadius: "9999px",
+              border: "none",
+              fontWeight: 700,
+              fontSize: "0.875rem",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "#fff",
+              cursor: "pointer",
+              background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
+              boxShadow: "0 4px 28px rgba(255,46,99,0.35)",
+            },
+            onclick: () => {
+              st.endSub = "end";
+              render();
+            },
+          },
+          ["Continue"]
+        )
+      );
       wrap.appendChild(box);
     } else if (st.endSub === "reveal" && st.endChosen) {
       const box = h("div", "", {
