@@ -102,11 +102,27 @@
     { id: "frenzy_drink", name: "Frenzy", price: 1, img: "./assets/fridge/frenzy.png" },
     { id: "danao", name: "Danao", price: 1.5, img: "./assets/fridge/danao.png" },
     { id: "bandung", name: "Bandung Milk", price: 1.5, img: "./assets/fridge/bandung-milk.png" },
+    { id: "snickers", name: "Snickers", price: 1.25, img: "./assets/fridge/snickers.png" },
+    { id: "galaxy", name: "Galaxy", price: 1.25, img: "./assets/fridge/galaxy.png" },
+    { id: "cheesecake", name: "Cheesecake", price: 1.25, img: "./assets/fridge/cheesecake.png" },
+    { id: "unikai_ice_cream_sandwich", name: "Unikai Ice Cream Sandwich", price: 1.25, img: "./assets/fridge/unikai-ice-cream-sandwich.png" },
   ];
 
   const FLOOR_SHOWCASE_IDS = [
     "chipsticks",
+    "square_crisps",
     "salad_chips",
+    "safari_grills",
+    "mazoon",
+    "majid_crispy",
+    "super_ring",
+    "qrakers",
+    "ali_baba",
+    "raja",
+    "al_mudhish",
+    "oishi",
+    "funfare",
+    "polo",
     "chips_oman",
     "papy_snacks",
     "funtime_fizzy_bottle",
@@ -128,10 +144,12 @@
     "magic_pops",
   ];
   const FLOOR_SHOWCASE_ITEMS = FLOOR_SHOWCASE_IDS.map((id) => SNACKS.find((item) => item.id === id)).filter(Boolean);
+  const FLOOR_SHELVES = 3;
+  const FLOOR_PER_SHELF = Math.ceil(FLOOR_SHOWCASE_ITEMS.length / FLOOR_SHELVES);
   const FLOOR_SHOWCASE_ROWS = [
-    FLOOR_SHOWCASE_ITEMS.slice(0, 7),
-    FLOOR_SHOWCASE_ITEMS.slice(7, 14),
-    FLOOR_SHOWCASE_ITEMS.slice(14, 21),
+    FLOOR_SHOWCASE_ITEMS.slice(0, FLOOR_PER_SHELF),
+    FLOOR_SHOWCASE_ITEMS.slice(FLOOR_PER_SHELF, FLOOR_PER_SHELF * 2),
+    FLOOR_SHOWCASE_ITEMS.slice(FLOOR_PER_SHELF * 2, FLOOR_PER_SHELF * 3),
   ];
 
   const MEMORIES_END = [
@@ -148,6 +166,13 @@
     "We are glad to share a few of the memories that are instilled in us, and we hope they echoed something familiar in you.",
     "Thank you for spending this visit with us in Baqalaland.",
   ];
+  const VILLA_DESCRIPTIONS = [
+    "the villa across the street",
+    "the pink villa",
+    "the corner villa with the blue gate",
+    "the villa by the roundabout",
+    "the villa with the palm tree",
+  ];
 
   const MAX_BUDGET = 10;
 
@@ -156,11 +181,13 @@
   }
 
   function scoreSpeedRound() {
-    if (st.spTargetsSpawned > 0 && st.spHits === st.spTargetsSpawned) return 3;
-    if (st.spHits >= 8) return 3;
-    if (st.spHits >= 5) return 2;
-    if (st.spHits >= 2) return 1;
-    return 0;
+    let base = 0;
+    if (st.spTargetsSpawned > 0 && st.spHits === st.spTargetsSpawned && st.spMiss === 0) base = 3;
+    else if (st.spHits >= 8) base = 3;
+    else if (st.spHits >= 5) base = 2;
+    else if (st.spHits >= 2) base = 1;
+    const missPenalty = Math.floor(st.spMiss / 2);
+    return Math.max(0, base - missPenalty);
   }
 
   // Audio (ported from src/lib/audioEngine.js)
@@ -219,9 +246,11 @@
   }
   function startFridgeHum() {
     startLoop("fridgeHum", () => {
-      tone(60, 0.6, 0.04, "sawtooth");
-      tone(120, 0.6, 0.02, "sine");
-    }, 500);
+      // Softer cooling hum: less harsh, slightly airy.
+      tone(74, 0.72, 0.018, "sine");
+      tone(148, 0.72, 0.01, "triangle");
+      if (Math.random() < 0.22) noise(0.07, 0.006, 1400);
+    }, 760);
   }
   function stopFridgeHum() {
     stopLoop("fridgeHum");
@@ -272,9 +301,12 @@
   }
   function startShopAmbience() {
     startLoop("shop", () => {
-      tone(55, 0.8, 0.025, "sawtooth");
-      noise(0.4, 0.008, 300);
-    }, 700);
+      // Warm, subtle shelf ambience with gentle high-frequency texture.
+      tone(196, 0.45, 0.007, "sine");
+      tone(262, 0.38, 0.005, "triangle");
+      noise(0.11, 0.0035, 1100);
+      if (Math.random() < 0.18) tone(784, 0.08, 0.004, "sine");
+    }, 980);
   }
   function stopShopAmbience() {
     stopLoop("shop");
@@ -311,7 +343,14 @@
       else if (k === "disabled") el.disabled = !!v;
       else if (k.startsWith("on") && typeof v === "function") {
         const ev = k.slice(2).toLowerCase();
-        el.addEventListener(ev, v);
+        if (ev === "click" && tag === "button" && attrs.noClickSfx !== true) {
+          el.addEventListener(ev, (e) => {
+            if (!el.disabled) playClick();
+            v(e);
+          });
+        } else {
+          el.addEventListener(ev, v);
+        }
       } else if (v != null && k !== "disabled") el.setAttribute(k, v);
     }
     for (const c of children) {
@@ -405,7 +444,7 @@
     const style = document.createElement("style");
     style.id = BAG_DROP_STYLE_ID;
     style.textContent =
-      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-88vh) scale(0.82) rotate(-12deg)}52%{opacity:1;transform:translateY(12px) scale(1.04) rotate(5deg)}78%{opacity:1;transform:translateY(-6px) scale(0.98) rotate(-2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}@keyframes bagWeightSettle{0%{transform:translateY(0) scaleY(1)}35%{transform:translateY(2px) scaleY(0.992)}62%{transform:translateY(7px) scaleY(0.975)}78%{transform:translateY(4px) scaleY(0.984)}100%{transform:translateY(0) scaleY(1)}}";
+      "@keyframes bagDropIn{0%{opacity:0;transform:translateY(-88vh) scale(0.82) rotate(-12deg)}18%{opacity:1}52%{opacity:1;transform:translateY(12px) scale(1.04) rotate(5deg)}78%{opacity:.82;transform:translateY(-6px) scale(0.98) rotate(-2deg)}100%{opacity:.62;transform:translateY(0) scale(1) rotate(0deg)}}@keyframes bagWeightSettle{0%{transform:translateY(0) scaleY(1)}35%{transform:translateY(2px) scaleY(0.992)}62%{transform:translateY(7px) scaleY(0.975)}78%{transform:translateY(4px) scaleY(0.984)}100%{transform:translateY(0) scaleY(1)}}@keyframes bagPourTilt{0%{transform:rotate(180deg) translateY(-10px)}30%{transform:rotate(183deg) translateY(-7px)}60%{transform:rotate(176deg) translateY(-4px)}100%{transform:rotate(180deg) translateY(0)}}@keyframes snackPourOut{0%{opacity:0;transform:translateY(-10px) scale(0.9) rotate(-8deg)}14%{opacity:1}72%{opacity:1}100%{opacity:0;transform:translateY(118px) scale(1) rotate(0deg)}}@keyframes endingQuestionIn{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}";
     document.head.appendChild(style);
   }
   const COLOR_SHIFT_STYLE_ID = "baqala-color-shift-keyframes";
@@ -434,20 +473,29 @@
       "@keyframes rememberBubblePopIn{0%{opacity:0;transform:scale(0.82) translateY(10px)}62%{opacity:1;transform:scale(1.04) translateY(0)}100%{opacity:1;transform:scale(1) translateY(0)}}";
     document.head.appendChild(style);
   }
+  const BOOK_STYLE_ID = "baqala-book-keyframes";
+  function injectBookKeyframes() {
+    if (document.getElementById(BOOK_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = BOOK_STYLE_ID;
+    style.textContent =
+      "@keyframes bookCoverOpen{0%{transform:perspective(1200px) rotateY(0deg)}100%{transform:perspective(1200px) rotateY(-178deg)}}@keyframes bookPageIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}@keyframes bookTypeIn{0%{width:0}100%{width:100%}}";
+    document.head.appendChild(style);
+  }
 
   const MG_ITEMS = [
-    { id: "chipsticks", img: BASE + "2dc4fdc49_1.png", label: "Chipsticks" },
-    { id: "salad_chips", img: BASE + "52a18141c_2.png", label: "Salad Chips" },
     { id: "square_crisps", img: BASE + "9ae26c1fd_3.png", label: "Square Crisps" },
-    { id: "areej", img: BASE + "4cce014cf_13.png", label: "Areej Juice" },
-    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun" },
-    { id: "rani", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice" },
-    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top" },
-    { id: "laban_up", img: "./assets/fridge/laban-up.png", label: "Laban Up" },
-    { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry" },
-    { id: "bandung", img: "./assets/fridge/bandung-milk.png", label: "Bandung Milk" },
-    { id: "papy_snacks", img: "./assets/shelf/papy-snacks.png", label: "Papy Snacks" },
-    { id: "yan_yan", img: "./assets/shelf/yan-yan.png", label: "Yan Yan" },
+    { id: "safari_grills", img: BASE + "0968e99e0_4.png", label: "Safari Grills" },
+    { id: "mazoon", img: BASE + "1cc097fc5_5.png", label: "Mazoon" },
+    { id: "majid_crispy", img: BASE + "7ca857f36_6.png", label: "Majid Crispy" },
+    { id: "super_ring", img: BASE + "b7e1a3e31_7.png", label: "Super Ring" },
+    { id: "qrakers", img: BASE + "626e806c3_8.png", label: "Qrakers" },
+    { id: "ali_baba", img: BASE + "0eb68be80_9.png", label: "Ali Baba" },
+    { id: "raja", img: BASE + "2eb84a7f8_10.png", label: "Raja" },
+    { id: "al_mudhish", img: BASE + "745219236_11.png", label: "Al Mudhish" },
+    { id: "oishi", img: BASE + "5ae7f1637_12.png", label: "Oishi Prawns" },
+    { id: "funfare", img: BASE + "f4b01209f_19.png", label: "Fun Fare" },
+    { id: "polo", img: BASE + "7e236964f_20.png", label: "Polo Mints" },
   ];
   const MG_SHOW = 5;
   const MG_SHOW_MS = 7000;
@@ -469,20 +517,27 @@
   ];
   const SQ_LEN = 5;
   const FRIDGE_DRINKS = [
-    { id: "areej", img: BASE + "4cce014cf_13.png", label: "Areej", x: "12%", y: "16%" },
-    { id: "fruit_shoot", img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "30%", y: "16%" },
-    { id: "rani", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "48%", y: "16%" },
-    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "66%", y: "16%" },
-    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "84%", y: "16%" },
-    { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "12%", y: "50%" },
-    { id: "star_mango", img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "30%", y: "50%" },
-    { id: "frenzy_drink", img: "./assets/fridge/frenzy.png", label: "Frenzy", x: "48%", y: "50%" },
-    { id: "danao", img: "./assets/fridge/danao.png", label: "Danao", x: "66%", y: "50%" },
-    { id: "bandung", img: "./assets/fridge/bandung-milk.png", label: "Bandung Milk", x: "84%", y: "50%" },
-    { id: "igloo_mango_tub", img: "./assets/fridge/igloo-mango-tub.png", label: "Igloo Mango", x: "21%", y: "84%" },
-    { id: "igloo_evens", img: "./assets/fridge/igloo-evens-chocolate.png", label: "Igloo Evens", x: "39%", y: "84%" },
-    { id: "igloo_maxi_sup", img: "./assets/fridge/igloo-maxi-sup.png", label: "Igloo Maxi Sup", x: "57%", y: "84%" },
-    { id: "laban_up", img: "./assets/fridge/laban-up.png", label: "Laban Up", x: "75%", y: "84%" },
+    // Top row (ice creams / frozen treats)
+    { id: "igloo_mango_tub", img: "./assets/fridge/igloo-mango-tub.png", label: "Igloo Mango", x: "10%", y: "16%" },
+    { id: "igloo_evens", img: "./assets/fridge/igloo-evens-chocolate.png", label: "Igloo Evens", x: "26%", y: "16%" },
+    { id: "igloo_maxi_sup", img: "./assets/fridge/igloo-maxi-sup.png", label: "Igloo Maxi Sup", x: "42%", y: "16%" },
+    { id: "unikai_ice_cream_sandwich", img: "./assets/fridge/unikai-ice-cream-sandwich.png", label: "Unikai Ice Cream Sandwich", x: "58%", y: "16%" },
+    { id: "snickers", img: "./assets/fridge/snickers.png", label: "Snickers", x: "74%", y: "16%" },
+    { id: "galaxy", img: "./assets/fridge/galaxy.png", label: "Galaxy", x: "90%", y: "16%" },
+    // Middle row (drinks)
+    { id: "areej", img: BASE + "4cce014cf_13.png", label: "Areej", x: "10%", y: "50%" },
+    { id: "fruit_shoot", img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "26%", y: "50%" },
+    { id: "rani", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "42%", y: "50%" },
+    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "58%", y: "50%" },
+    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "74%", y: "50%" },
+    { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "90%", y: "50%" },
+    // Bottom row (drinks)
+    { id: "star_mango", img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "10%", y: "82%" },
+    { id: "frenzy_drink", img: "./assets/fridge/frenzy.png", label: "Frenzy", x: "26%", y: "82%" },
+    { id: "danao", img: "./assets/fridge/danao.png", label: "Danao", x: "42%", y: "82%" },
+    { id: "bandung", img: "./assets/fridge/bandung-milk.png", label: "Bandung Milk", x: "58%", y: "82%" },
+    { id: "laban_up", img: "./assets/fridge/laban-up.png", label: "Laban Up", x: "74%", y: "82%" },
+    { id: "cheesecake", img: "./assets/fridge/cheesecake.png", label: "Cheesecake", x: "90%", y: "82%" },
   ];
   const FRIDGE_PRICE_BY_ID = {
     areej: 1,
@@ -499,6 +554,10 @@
     igloo_evens: 1.25,
     igloo_maxi_sup: 1.25,
     laban_up: 1,
+    snickers: 1.25,
+    galaxy: 1.25,
+    cheesecake: 1.25,
+    unikai_ice_cream_sandwich: 1.25,
   };
   const CANDY_SHELF_IMGS = [
     BASE + "2dc4fdc49_1.png",
@@ -602,13 +661,17 @@
     floorPick: [],
     floorSpent: 0,
     floorOver: false,
+    titleFontReady: typeof document !== "undefined" && !!document.fonts && document.fonts.check('400 1em "Playwrite PE"'),
+    titleFontLoadStarted: false,
     rcRev: 0,
     rcTot: false,
     rcInt: null,
     rcRevealComplete: false,
     rcRevealScheduled: false,
+    rcBookOpened: false,
     endSub: "bag",
     endChosen: null,
+    endReady: false,
     narrative: null,
     candyRaf: null,
     candyH: 0,
@@ -623,6 +686,25 @@
     fridgeSnapshot: null,
     fridgeOpen: false,
   };
+
+  function ensureTitleFontReady() {
+    if (st.titleFontReady || st.titleFontLoadStarted) return;
+    st.titleFontLoadStarted = true;
+    if (!document.fonts || !document.fonts.load) {
+      st.titleFontReady = true;
+      return;
+    }
+    document.fonts
+      .load('400 1em "Playwrite PE"')
+      .then(() => {
+        st.titleFontReady = true;
+        if (st.phase === PHASES.ENTRANCE) render();
+      })
+      .catch(() => {
+        // Fall back gracefully if font load fails.
+        st.titleFontReady = true;
+      });
+  }
 
   function setPhase(next) {
     if (next !== PHASES.RECEIPT && st.rcInt) {
@@ -688,6 +770,7 @@
       st.rcTot = false;
       st.rcRevealComplete = false;
       st.rcRevealScheduled = false;
+      st.rcBookOpened = false;
       if (st.rcInt) clearInterval(st.rcInt);
       st.rcInt = null;
       const total = st.picks.reduce((s, p) => s + p.price, 0).toFixed(2);
@@ -695,6 +778,7 @@
       st.narrative = {
         total,
         leftover,
+        villa: VILLA_DESCRIPTIONS[Math.floor(Math.random() * VILLA_DESCRIPTIONS.length)],
       };
     }
     if (next === PHASES.BUDGET) {
@@ -711,6 +795,7 @@
     if (next === PHASES.ENDING) {
       st.endSub = "bag";
       st.endChosen = null;
+      st.endReady = false;
     }
     render();
   }
@@ -734,6 +819,7 @@
     st.floorPick = [];
     st.floorSpent = 0;
     st.floorOver = false;
+    st.endReady = false;
     st.brStarted = false;
     st.brCount = 0;
     st.brDone = false;
@@ -747,6 +833,7 @@
     st.rcTot = false;
     st.rcRevealComplete = false;
     st.rcRevealScheduled = false;
+    st.rcBookOpened = false;
     st.memoryStep = 0;
     st.fridgeClr = 0;
     st.fridgeDone = false;
@@ -788,6 +875,7 @@
   }
 
   function renderEntrance() {
+    ensureTitleFontReady();
     injectBallKeyframes();
     injectCloudDriftKeyframes();
     const p = st.entranceP;
@@ -857,7 +945,7 @@
         zIndex: 10,
         pointerEvents: "none",
         userSelect: "none",
-        opacity: titleOpacity,
+        opacity: st.titleFontReady ? titleOpacity : 0,
       },
     });
     const wordmark = "Baqalaland";
@@ -2383,6 +2471,22 @@
       })
     );
     const box = h("div", "", { style: { position: "relative", zIndex: 10, textAlign: "center", maxWidth: "32rem" } });
+    box.appendChild(
+      h(
+        "p",
+        "font-heading",
+        {
+          style: {
+            fontSize: "10px",
+            letterSpacing: "0.5em",
+            color: EYEBROW_GOLD,
+            textTransform: "uppercase",
+            margin: "0 0 0.75rem",
+          },
+        },
+        ["you earned"]
+      )
+    );
     const num = h("div", "font-heading", {
       id: "budget-num",
       style: {
@@ -2446,6 +2550,18 @@
   function renderCurtain() {
     const NUM_STRIPS = 14;
     st.curtainTg = st.curtainCur;
+    let hint = null;
+    const startCurtainEnter = () => {
+      if (st.curtainPart) return;
+      playCurtainSwoosh();
+      st.curtainPart = true;
+      if (hint) {
+        hint.style.transition = "opacity 0.2s ease";
+        hint.style.opacity = "0";
+      }
+      // Let strips finish sliding sideways before scene change.
+      setTimeout(() => setPhase(PHASES.FLOOR), 1220);
+    };
     const wrap = h("div", "", {
       style: {
         position: "fixed",
@@ -2456,13 +2572,6 @@
         overflow: "hidden",
         cursor: "pointer",
         background: "linear-gradient(180deg, #0d0822 0%, #1a0f40 60%, #2D1B69 100%)",
-      },
-      onclick: () => {
-        if (st.curtainPart) return;
-        playCurtainSwoosh();
-        st.curtainPart = true;
-        render();
-        setTimeout(() => setPhase(PHASES.FLOOR), 900);
       },
     });
     wrap.appendChild(
@@ -2516,7 +2625,7 @@
           height: "100%",
           transformOrigin: "top",
           transform: `translateX(${partX}px)`,
-          transition: st.curtainPart ? `transform ${partDuration}s cubic-bezier(0.55, 0, 1, 0.45)` : "transform 0.12s ease-out",
+          transition: "transform 0.12s ease-out",
         },
       });
       col.appendChild(
@@ -2569,6 +2678,8 @@
         const direction = stripCenter < st.curtainX ? -1 : 1;
         const sway = influence * 44 * direction;
         const partX = st.curtainPart ? (stripCenter < 0.5 ? -window.innerWidth : window.innerWidth) : sway;
+        const partDuration = 0.45 + Math.abs(stripCenter - 0.5) * 0.35;
+        col.style.transition = st.curtainPart ? `transform ${partDuration}s cubic-bezier(0.55, 0, 1, 0.45)` : "transform 0.12s ease-out";
         col.style.transform = `translateX(${partX}px)`;
       });
       st.curtainRaf = requestAnimationFrame(tick);
@@ -2579,7 +2690,7 @@
       st.curtainRaf = null;
     });
     if (!st.curtainPart) {
-      const hint = h("div", "", {
+      hint = h("div", "", {
         style: {
           position: "absolute",
           bottom: "2.5rem",
@@ -2609,7 +2720,11 @@
               border: "1px solid rgba(255,46,99,0.45)",
               boxShadow: "0 0 20px rgba(255,46,99,0.15)",
               animation: "pulseScale 2s ease-in-out infinite",
+              pointerEvents: "auto",
+              cursor: "pointer",
+              border: "1px solid rgba(255,255,255,0.22)",
             },
+            onclick: () => startCurtainEnter(),
           },
           ["Enter"]
         )
@@ -2721,6 +2836,7 @@
         return;
       }
       if (+(st.floorSpent + snack.price).toFixed(2) > st.budget) {
+        playLand();
         st.floorOver = true;
         render();
         setTimeout(() => {
@@ -2926,6 +3042,7 @@
         return;
       }
       if (+(st.floorSpent + drink.price).toFixed(2) > st.budget) {
+        playLand();
         st.floorOver = true;
         render();
         setTimeout(() => {
@@ -3036,6 +3153,7 @@
     const handle = h("div", "", {
       style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: "pointer", opacity: st.fridgeOpen || st.fridgeClr >= 25 ? 1 : 0.75 },
       onclick: () => {
+        playClick();
         if (st.fridgeOpen || st.fridgeClr >= 25) {
           st.fridgeOpen = !st.fridgeOpen;
           render();
@@ -3044,6 +3162,28 @@
     });
     door.appendChild(handle);
     body.appendChild(door);
+    body.appendChild(
+      h(
+        "p",
+        "font-body",
+        {
+          style: {
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: "0.4rem",
+            textAlign: "center",
+            margin: 0,
+            fontSize: "0.7rem",
+            letterSpacing: "0.08em",
+            color: "rgba(255,255,255,0.45)",
+            fontStyle: "italic",
+            pointerEvents: "none",
+          },
+        },
+        ["Open the fridge door to select the items"]
+      )
+    );
     wrap.appendChild(body);
     const counter = h("div", "", {
       style: {
@@ -3104,17 +3244,34 @@
     return wrap;
   }
 
-  function receiptSnackLine(snack) {
-    const line = h("div", "", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" } });
+  function receiptSnackLine(snack, animate = false) {
+    const line = h("div", "", { style: { display: "flex", alignItems: "center", gap: "0.5rem", transform: `rotate(${(Math.random() * 1.2 - 0.6).toFixed(2)}deg)` } });
     const left = h("div", "", { style: { display: "flex", alignItems: "center", gap: "0.5rem" } });
-    left.appendChild(h("img", "", { src: snack.img, alt: snack.name, style: { width: "2rem", height: "2rem", objectFit: "contain" } }));
-    left.appendChild(h("span", "font-body", { style: { fontSize: "0.875rem", color: "hsl(var(--foreground))" } }, [snack.name]));
+    const sentence = ` ${snack.name}.`;
+    left.appendChild(
+      h("span", "font-body", {
+        style: {
+          display: "inline-block",
+          fontSize: "1.02rem",
+          color: "#1f4fa3",
+          fontFamily: "'Bradley Hand','Segoe Print','Comic Sans MS','Marker Felt',cursive",
+          letterSpacing: "0.02em",
+          textShadow: "0 0 0.2px #1f4fa3",
+          width: animate ? "0" : "100%",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          animation: animate ? `bookTypeIn 0.55s steps(${Math.max(12, sentence.length)}, end) forwards` : "none",
+        },
+      }, [sentence])
+    );
     line.appendChild(left);
-    line.appendChild(h("span", "font-heading", { style: { fontSize: "0.875rem", color: "#FF2E63", fontWeight: 700 } }, [`${snack.price.toFixed(2)} AED`]));
     return line;
   }
 
   function renderReceipt() {
+    injectBookKeyframes();
+    const shouldAnimateBookOpen = !st.rcBookOpened;
+    if (shouldAnimateBookOpen) st.rcBookOpened = true;
     if (st.picks.length === 0) {
       st.rcRevealComplete = true;
       st.rcTot = true;
@@ -3130,9 +3287,7 @@
         st.rcRev += 1;
         const idx = st.rcRev - 1;
         const listEl = root.querySelector("[data-receipt-list]");
-        if (listEl && idx >= 0 && idx < st.picks.length) {
-          listEl.appendChild(receiptSnackLine(st.picks[idx]));
-        }
+        if (listEl && idx >= 0 && idx < st.picks.length) listEl.appendChild(receiptSnackLine(st.picks[idx], true));
         if (st.rcRev >= st.picks.length) {
           clearInterval(st.rcInt);
           st.rcInt = null;
@@ -3148,55 +3303,146 @@
         }
       }, 300);
     }
-    const wrap = h("div", "baqala-scroll", {
+    const wrap = h("div", "", {
       style: {
         position: "fixed",
         inset: 0,
         display: "flex",
         flexDirection: "column",
+        gap: "0.9rem",
         alignItems: "center",
         justifyContent: "center",
         padding: "1rem",
-        overflow: "auto",
+        overflow: "hidden",
         background: "linear-gradient(180deg, #0d0822 0%, #1a0f40 60%, #2D1B69 100%)",
       },
     });
-    wrap.appendChild(h("div", "", { style: { position: "absolute", top: "25%", left: "25%", width: "20rem", height: "20rem", background: "rgba(255,46,99,0.1)", borderRadius: "9999px", filter: "blur(100px)", pointerEvents: "none" } }));
-    wrap.appendChild(h("div", "", { style: { position: "absolute", bottom: "25%", right: "25%", width: "20rem", height: "20rem", background: "rgba(0,209,255,0.1)", borderRadius: "9999px", filter: "blur(100px)", pointerEvents: "none" } }));
-    const card = h("div", "", { style: { position: "relative", zIndex: 10, width: "100%", maxWidth: "28rem" } });
-    const paper = h("div", "receipt-paper rounded-2xl", { style: { borderRadius: "1rem", overflow: "hidden", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" } });
-    const header = h("div", "", { style: { background: "#2D1B69", color: "#fff", padding: "1.5rem", textAlign: "center" } });
-    header.appendChild(
-      h("p", "font-heading", { style: { fontSize: "10px", letterSpacing: "0.4em", color: EYEBROW_GOLD, textTransform: "uppercase", margin: 0 } }, ["-------------------"])
+    const stage = h("div", "", {
+      style: {
+        position: "relative",
+        width: "min(48rem, 86vw)",
+        height: "min(29rem, 74vh)",
+        perspective: "1400px",
+      },
+    });
+    const book = h("div", "", {
+      style: {
+        position: "absolute",
+        inset: 0,
+        borderRadius: "0.75rem",
+        boxShadow: "0 22px 46px rgba(0,0,0,0.5)",
+        overflow: "hidden",
+      },
+    });
+    const gutter = h("div", "", {
+      style: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: "50%",
+        width: "20px",
+        transform: "translateX(-50%)",
+        background:
+          "radial-gradient(ellipse 120% 100% at 50% 50%, rgba(20,45,78,0.26) 0%, rgba(20,45,78,0.08) 52%, rgba(20,45,78,0.22) 100%)",
+        zIndex: 4,
+        pointerEvents: "none",
+      },
+    });
+    const edgeLeft = h("div", "", {
+      style: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        width: "12px",
+        background: "linear-gradient(90deg, #204f93 0%, #2f60ad 100%)",
+        boxShadow: "inset -2px 0 4px rgba(0,0,0,0.22)",
+        zIndex: 3,
+        pointerEvents: "none",
+      },
+    });
+    const edgeRight = h("div", "", {
+      style: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        right: 0,
+        width: "12px",
+        background: "linear-gradient(270deg, #204f93 0%, #2f60ad 100%)",
+        boxShadow: "inset 2px 0 4px rgba(0,0,0,0.22)",
+        zIndex: 3,
+        pointerEvents: "none",
+      },
+    });
+    const rightPage = h("div", "", {
+      style: {
+        position: "absolute",
+        inset: 0,
+        left: "50%",
+        width: "50%",
+        background:
+          "repeating-linear-gradient(0deg, #fbfbf7 0px, #fbfbf7 18px, #d2ddeb 19px, #d2ddeb 20px)",
+        borderLeft: "2px solid rgba(40,80,120,0.2)",
+        boxShadow: "inset 14px 0 22px rgba(32,58,92,0.08)",
+        animation: shouldAnimateBookOpen ? "bookPageIn 0.45s ease-out 0.12s both" : "none",
+        opacity: 1,
+        padding: "1.25rem 1.1rem 1rem",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "'Bradley Hand','Segoe Print','Comic Sans MS','Marker Felt',cursive",
+      },
+    });
+    const leftPage = h("div", "", {
+      style: {
+        position: "absolute",
+        inset: 0,
+        width: "50%",
+        background:
+          "repeating-linear-gradient(0deg, #f7f9fd 0px, #f7f9fd 18px, #d2ddeb 19px, #d2ddeb 20px)",
+        borderRight: "1px solid rgba(40,80,120,0.14)",
+        boxShadow: "inset -14px 0 22px rgba(32,58,92,0.08)",
+        animation: shouldAnimateBookOpen ? "bookPageIn 0.45s ease-out 0.12s both" : "none",
+      },
+    });
+    const cover = h("div", "", {
+      style: {
+        position: "absolute",
+        inset: 0,
+        width: "50%",
+        transformOrigin: "left center",
+        transform: shouldAnimateBookOpen ? undefined : "perspective(1200px) rotateY(-178deg)",
+        animation: shouldAnimateBookOpen ? "bookCoverOpen 1.25s cubic-bezier(0.16, 0.72, 0.2, 1) both" : "none",
+        background: "linear-gradient(180deg, #2f60ad 0%, #1f4a8f 100%)",
+        borderRight: "2px solid rgba(255,255,255,0.18)",
+        boxShadow: "inset -20px 0 24px rgba(0,0,0,0.25)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+    });
+    cover.appendChild(
+      h("div", "font-heading", { style: { color: "rgba(255,255,255,0.95)", fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase" } }, ["Baqalaland"])
     );
-    header.appendChild(
-      h("h1", "font-baqalaland-title font-heading", {
-        style: {
-          fontWeight: 700,
-          fontSize: "clamp(1.5rem, 6vw, 1.875rem)",
-          letterSpacing: "0.12em",
-          color: "#FF2E63",
-          margin: "0.5rem 0",
-          textShadow: "0 0 12px rgba(255,46,99,0.55), 0 0 28px rgba(255,46,99,0.35)",
-        },
-      }, ["Baqalaland"])
-    );
-    header.appendChild(h("p", "font-heading", { style: { fontSize: "0.75rem", letterSpacing: "0.3em", color: EYEBROW_GOLD, textTransform: "uppercase", margin: 0 } }, ["A Memory Receipt"]));
-    paper.appendChild(header);
-    const body = h("div", "", { style: { padding: "1.5rem" } });
-    const divLabel = h("div", "", { style: { borderTop: "1px dashed rgba(45,27,105,0.2)", marginBottom: "1.25rem", textAlign: "center" } });
-    divLabel.appendChild(
+    wrap.appendChild(
       h(
-        "span",
+        "p",
         "font-heading",
-        { style: { fontSize: "10px", letterSpacing: "0.15em", color: EYEBROW_GOLD, position: "relative", top: "-9px", background: "#fafafa", padding: "0 0.75rem" } },
-        ["YOU CHOSE"]
+        {
+          style: {
+            margin: "0 0 0.15rem",
+            fontSize: "0.72rem",
+            letterSpacing: "0.28em",
+            textTransform: "uppercase",
+            color: EYEBROW_GOLD,
+          },
+        },
+        ["Order logged"]
       )
     );
-    body.appendChild(divLabel);
     const list = h("div", "", {
       "data-receipt-list": "",
-      style: { display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.25rem" },
+      style: { display: "flex", flexDirection: "column", gap: "0.45rem", marginBottom: "0.15rem" },
     });
     if (st.rcTot) {
       st.picks.forEach((snack) => list.appendChild(receiptSnackLine(snack)));
@@ -3205,52 +3451,72 @@
         if (i < st.rcRev) list.appendChild(receiptSnackLine(snack));
       });
     }
-    body.appendChild(list);
+    rightPage.appendChild(list);
     if (st.rcTot) {
-      const tot = h("div", "", { style: { borderTop: "2px dashed rgba(45,27,105,0.2)", paddingTop: "1rem", marginBottom: "1rem" } });
+      const tot = h("div", "", { style: { paddingTop: "0.1rem", marginBottom: "0.65rem" } });
       tot.appendChild(
         h("div", "", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline" } }, [
-          h("span", "font-heading", { style: { fontSize: "0.875rem", color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: "0.08em" } }, ["Budget"]),
-          h("span", "font-heading", { style: { fontSize: "1rem", color: "hsl(var(--foreground))" } }, [`${st.budget} AED`]),
-        ])
-      );
-      tot.appendChild(
-        h("div", "", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.25rem" } }, [
-          h("span", "font-heading", { style: { fontSize: "0.875rem", color: "hsl(var(--muted-foreground))", textTransform: "uppercase", letterSpacing: "0.08em" } }, ["Spent"]),
-          h("span", "font-heading", { style: { fontSize: "1rem", color: "#FF2E63" } }, [`- ${st.narrative.total} AED`]),
-        ])
-      );
-      tot.appendChild(
-        h("div", "", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "0.5rem", paddingTop: "0.5rem", borderTop: "1px solid rgba(45,27,105,0.1)" } }, [
-          h("span", "font-heading", { style: { fontSize: "1rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "hsl(var(--foreground))" } }, ["Remaining"]),
           h(
             "span",
-            "font-heading",
-            { style: { fontWeight: 700, fontSize: "1.25rem", color: parseFloat(st.narrative.leftover) > 0 ? "#2D1B69" : "#FF2E63" } },
-            [`${st.narrative.leftover} AED`]
+            "font-body",
+            {
+              style: {
+                fontSize: "1.14rem",
+                color: "#1f4fa3",
+                fontWeight: 700,
+                fontFamily: "'Bradley Hand','Segoe Print','Comic Sans MS','Marker Felt',cursive",
+              },
+            },
+            [`${st.narrative.total} AED payed`]
           ),
         ])
       );
-      body.appendChild(tot);
-      body.appendChild(
+      rightPage.appendChild(tot);
+      rightPage.appendChild(
+        h(
+          "p",
+          "font-body",
+          {
+            style: {
+              margin: "0 0 0.8rem",
+              fontSize: "0.95rem",
+              color: "#1f4fa3",
+              fontStyle: "italic",
+              animation: shouldAnimateBookOpen ? "bookPageIn 0.4s ease-out 0.95s both" : "none",
+              fontFamily: "'Bradley Hand','Segoe Print','Comic Sans MS','Marker Felt',cursive",
+            },
+          },
+          [st.narrative.villa]
+        )
+      );
+    }
+    book.appendChild(leftPage);
+    book.appendChild(rightPage);
+    book.appendChild(edgeLeft);
+    book.appendChild(edgeRight);
+    book.appendChild(gutter);
+    book.appendChild(cover);
+    stage.appendChild(book);
+    wrap.appendChild(stage);
+    if (st.rcTot) {
+      wrap.appendChild(
         h(
           "button",
           "font-heading",
           {
             style: {
-              width: "100%",
-              marginTop: "1rem",
-              padding: "1rem",
+              width: "min(16rem, 78vw)",
+              padding: "0.85rem",
               color: "#fff",
               fontWeight: 700,
-              fontSize: "0.875rem",
+              fontSize: "0.82rem",
               textTransform: "uppercase",
-              letterSpacing: "0.25em",
+              letterSpacing: "0.14em",
               borderRadius: "9999px",
               border: "none",
               cursor: "pointer",
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
-              boxShadow: "0 4px 30px rgba(255,46,99,0.4)",
+              boxShadow: "0 4px 24px rgba(255,46,99,0.38)",
             },
             onclick: () => setPhase(PHASES.ENDING),
           },
@@ -3258,9 +3524,6 @@
         )
       );
     }
-    paper.appendChild(body);
-    card.appendChild(paper);
-    wrap.appendChild(card);
     return wrap;
   }
 
@@ -3309,14 +3572,20 @@
           return;
         }
         if (st.picks.length === 1) {
-          st.endChosen = null;
-          st.endSub = "end";
+          st.endChosen = st.picks[0];
+          st.endingMemoryLine = "Classic choice.";
+          st.endSub = "reveal";
           render();
+          setTimeout(() => {
+            if (st.phase === PHASES.ENDING && st.endSub === "reveal") {
+              st.endSub = "end";
+              render();
+            }
+          }, 2800);
           return;
-        } else {
-          st.endSub = "choose";
-          render();
         }
+        st.endSub = "choose";
+        render();
       };
       const box = h("div", "", {
         style: {
@@ -3349,12 +3618,13 @@
           bottom: "10%",
           zIndex: 1,
           pointerEvents: "none",
-          overflow: "visible",
+          overflow: "hidden",
           borderRadius: "18% 18% 26% 26%",
+          clipPath: "inset(0 0 0 0 round 18% 18% 26% 26%)",
           display: "grid",
           alignContent: "end",
           justifyItems: "center",
-          padding: "0.3rem 0.2rem 0.35rem",
+          padding: "0.28rem 0.16rem 0.3rem",
         },
       });
       const picksShown = st.picks.slice(0, 12);
@@ -3363,14 +3633,15 @@
       snacksLayer.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
       snacksLayer.style.columnGap = picksShown.length > 9 ? "0.16rem" : "0.22rem";
       snacksLayer.style.rowGap = picksShown.length > 9 ? "0.08rem" : "0.14rem";
+      snacksLayer.style.gridAutoRows = picksShown.length > 9 ? "2.2rem" : picksShown.length > 6 ? "2.8rem" : "3.2rem";
       const snackSize =
         picksShown.length <= 1
           ? "clamp(5.4rem, 30vw, 7.2rem)"
           : picksShown.length <= 4
           ? "clamp(4.1rem, 18vw, 5rem)"
           : picksShown.length <= 8
-          ? "clamp(3.1rem, 13vw, 3.9rem)"
-          : "clamp(2.3rem, 10vw, 3.1rem)";
+          ? "clamp(2.8rem, 11.5vw, 3.4rem)"
+          : "clamp(1.9rem, 7.2vw, 2.4rem)";
       picksShown.forEach((snack, i) => {
         snacksLayer.appendChild(
           h("img", "", {
@@ -3379,6 +3650,8 @@
             style: {
               width: snackSize,
               height: snackSize,
+              maxWidth: "92%",
+              maxHeight: "92%",
               objectFit: "contain",
               filter: "brightness(0.96) drop-shadow(0 3px 8px rgba(0,0,0,0.42))",
               animation: `bagDropIn 0.8s cubic-bezier(0.18,0.86,0.24,1) ${i * 0.14}s both`,
@@ -3399,7 +3672,7 @@
             position: "relative",
             zIndex: 2,
             pointerEvents: "none",
-            opacity: 1,
+            opacity: 0.84,
             transformOrigin: "50% 100%",
             animation: `bagWeightSettle ${bagWeightDur} ease-in-out both`,
           },
@@ -3469,7 +3742,7 @@
         h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "1rem" } }, ["the real question"])
       );
       box.appendChild(
-        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.5rem, 5vw, 1.875rem)", color: "#fff", marginBottom: "0.5rem" } }, ["What do you have first?"])
+        h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "clamp(1.5rem, 5vw, 1.875rem)", color: "#fff", marginBottom: "0.5rem" } }, ["What will you have first?"])
       );
       box.appendChild(
         h("p", "font-body", { style: { fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", fontStyle: "italic", marginBottom: "2rem" } }, ["Tap one. Be honest with yourself."])
@@ -3547,11 +3820,11 @@
     } else if (st.endSub === "end") {
       const box = h("div", "", { style: { display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", maxWidth: "36rem", padding: "0 2rem" } });
       box.appendChild(
-        h("p", "font-heading", { style: { fontSize: "9px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "2.5rem" } }, ["a note before you go"])
+        h("p", "font-heading", { style: { fontSize: "10px", letterSpacing: "0.5em", color: EYEBROW_GOLD, textTransform: "uppercase", marginBottom: "2.5rem" } }, ["a note before you go"])
       );
       const lines = h("div", "", { style: { display: "flex", flexDirection: "column", gap: "1.25rem", marginBottom: "3rem" } });
-      const closingLeadStyle = { fontWeight: 700, fontSize: "clamp(1.25rem, 4vw, 1.5rem)", color: "#fff", lineHeight: 1.4, margin: 0 };
-      const closingBodyStyle = { fontSize: "0.875rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, margin: 0 };
+      const closingLeadStyle = { fontWeight: 700, fontSize: "clamp(1.4rem, 4.5vw, 1.7rem)", color: "#fff", lineHeight: 1.4, margin: 0 };
+      const closingBodyStyle = { fontSize: "1rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, margin: 0 };
       CLOSING_LINES.forEach((line, i) => {
         if (i === 0) lines.appendChild(h("p", "font-heading", { style: closingLeadStyle }, [line]));
         else lines.appendChild(h("p", "font-body", { style: closingBodyStyle }, [line]));
