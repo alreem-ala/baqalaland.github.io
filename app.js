@@ -170,6 +170,14 @@
     "We are glad to share a few of the memories that are instilled in us, and we hope they echoed something familiar in you.",
     "Thank you for spending this visit with us in Baqalaland.",
   ];
+  const SFX_NEXT_PAGE = "./assets/mixkit-select-click-1109.wav";
+  const SFX_SELECT = "./assets/mixkit-cool-interface-click-tone-2568.wav";
+  const SFX_BUDGET_COIN = "./assets/mixkit-arcade-game-jump-coin-216.wav";
+  const SFX_PAGE_TURN = "./assets/freesound_community-pageturn-102978.mp3";
+  const SFX_COUNTDOWN = "./assets/u_lfmkadc0ha-timer_countdown-345137.mp3";
+  const SFX_PLASTIC_CRUNCH = "./assets/freesound_community-plastic-crunch-83779.mp3";
+  const SFX_CORRECT_BLING = "./assets/u_o8xh7gwsrj-correct_answer_toy_bi-bling-476370.mp3";
+  let countdownAudio = null;
   const ENDING_QUESTIONS = [
     "What would you eat first?",
     "Which would you share with your sibling?",
@@ -207,144 +215,67 @@
     return idx;
   }
 
-  // Audio (ported from src/lib/audioEngine.js)
-  let ctx = null;
-  function getCtx() {
-    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === "suspended") ctx.resume();
-    return ctx;
-  }
-  function noise(duration = 0.3, gain = 0.15, filterFreq = 800) {
-    const c = getCtx();
-    const bufferSize = c.sampleRate * duration;
-    const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-    const source = c.createBufferSource();
-    source.buffer = buffer;
-    const filter = c.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = filterFreq;
-    filter.Q.value = 0.5;
-    const gainNode = c.createGain();
-    gainNode.gain.setValueAtTime(gain, c.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration);
-    source.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(c.destination);
-    source.start();
-    source.stop(c.currentTime + duration);
-  }
-  function tone(freq, duration = 0.2, gain = 0.1, type = "sine", detune = 0) {
-    const c = getCtx();
-    const osc = c.createOscillator();
-    const gainNode = c.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    osc.detune.value = detune;
-    gainNode.gain.setValueAtTime(gain, c.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration);
-    osc.connect(gainNode);
-    gainNode.connect(c.destination);
-    osc.start();
-    osc.stop(c.currentTime + duration);
-  }
-  const loops = {};
-  function startLoop(key, fn, interval) {
-    if (loops[key]) return;
-    fn();
-    loops[key] = setInterval(fn, interval);
-  }
-  function stopLoop(key) {
-    if (loops[key]) {
-      clearInterval(loops[key]);
-      delete loops[key];
-    }
-  }
-  function startFridgeHum() {
-    startLoop("fridgeHum", () => {
-      // Softer cooling hum: less harsh, slightly airy.
-      tone(74, 0.72, 0.018, "sine");
-      tone(148, 0.72, 0.01, "triangle");
-      if (Math.random() < 0.22) noise(0.07, 0.006, 1400);
-    }, 760);
-  }
-  function stopFridgeHum() {
-    stopLoop("fridgeHum");
-  }
+  // Audio (asset-only)
+  function startFridgeHum() {}
+  function stopFridgeHum() {}
   function playGlassWipe() {
-    const c = getCtx();
-    const osc = c.createOscillator();
-    const gain = c.createGain();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(1200, c.currentTime);
-    osc.frequency.linearRampToValueAtTime(800, c.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.05, c.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.12);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start();
-    osc.stop(c.currentTime + 0.12);
+    playSelectClick();
   }
   function playFound() {
-    [523, 659, 784, 1047].forEach((f, i) => {
-      setTimeout(() => tone(f, 0.25, 0.12, "sine"), i * 80);
-    });
+    playSelectClick();
   }
   function playRise(heightFraction) {
     if (heightFraction < 0.05) return;
-    const freq = 200 + heightFraction * 600;
-    tone(freq, 0.05, 0.04 * heightFraction, "sine");
+    playSelectClick();
   }
   function playLand() {
-    tone(120, 0.12, 0.08, "triangle");
-    noise(0.06, 0.06, 400);
+    playSelectClick();
   }
   function playGrab() {
-    noise(0.12, 0.1, 1200);
-    setTimeout(() => tone(880, 0.15, 0.08, "sine"), 80);
+    playSelectClick();
   }
   function playCurtainSwoosh() {
-    noise(0.4, 0.12, 600);
-    tone(300, 0.3, 0.06, "sawtooth");
+    playNextPageClick();
+  }
+  function playSoundFromAsset(src, volume = 0.45) {
+    const a = new Audio(src);
+    a.volume = volume;
+    a.play().catch(() => {});
+  }
+  function playNextPageClick() {
+    playSoundFromAsset(SFX_NEXT_PAGE, 0.48);
+  }
+  function playSelectClick() {
+    playSoundFromAsset(SFX_SELECT, 0.42);
   }
   function playClick() {
-    tone(440, 0.06, 0.08, "square");
-    noise(0.04, 0.04, 2000);
+    playSelectClick();
   }
   function playCoin() {
-    tone(1200 + Math.random() * 200, 0.18, 0.1, "sine");
-    tone(800, 0.1, 0.04, "sine");
+    playSoundFromAsset(SFX_BUDGET_COIN, 0.4);
   }
-  function startShopAmbience() {
-    startLoop("shop", () => {
-      // Warm, subtle shelf ambience with gentle high-frequency texture.
-      tone(196, 0.45, 0.007, "sine");
-      tone(262, 0.38, 0.005, "triangle");
-      noise(0.11, 0.0035, 1100);
-      if (Math.random() < 0.18) tone(784, 0.08, 0.004, "sine");
-    }, 980);
+  function playCountdownTick() {
+    if (countdownAudio) {
+      countdownAudio.pause();
+      countdownAudio.currentTime = 0;
+    }
+    countdownAudio = new Audio(SFX_COUNTDOWN);
+    countdownAudio.volume = 0.28;
+    countdownAudio.play().catch(() => {});
   }
-  function stopShopAmbience() {
-    stopLoop("shop");
+  function stopCountdownTick() {
+    if (!countdownAudio) return;
+    countdownAudio.pause();
+    countdownAudio.currentTime = 0;
+    countdownAudio = null;
   }
+  function startShopAmbience() {}
+  function stopShopAmbience() {}
   function playProductPick() {
-    noise(0.1, 0.08, 800);
-    setTimeout(() => tone(660, 0.12, 0.06, "sine"), 50);
+    playSelectClick();
   }
   function playWhoosh() {
-    const c = getCtx();
-    const osc = c.createOscillator();
-    const gain = c.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(400, c.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(80, c.currentTime + 0.35);
-    gain.gain.setValueAtTime(0.08, c.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.35);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start();
-    osc.stop(c.currentTime + 0.35);
+    playNextPageClick();
   }
 
   // DOM helpers
@@ -358,11 +289,15 @@
     for (const [k, v] of Object.entries(attrs)) {
       if (k === "style" && v && typeof v === "object") Object.assign(el.style, v);
       else if (k === "disabled") el.disabled = !!v;
+      else if (k === "sfx" || k === "noClickSfx") continue;
       else if (k.startsWith("on") && typeof v === "function") {
         const ev = k.slice(2).toLowerCase();
         if (ev === "click" && tag === "button" && attrs.noClickSfx !== true) {
           el.addEventListener(ev, (e) => {
-            if (!el.disabled) playClick();
+            if (!el.disabled) {
+              if (attrs.sfx === "next") playNextPageClick();
+              else playSelectClick();
+            }
             v(e);
           });
         } else {
@@ -878,18 +813,22 @@
     st.mgTids = [];
     if (st.mgCdInterval) clearInterval(st.mgCdInterval);
     st.mgCdInterval = null;
+    stopCountdownTick();
     const t1 = setTimeout(() => {
       st.mgPhase = "countdown";
       render();
       let c = 3;
       st.mgCd = c;
+      playCountdownTick();
       st.mgCdInterval = setInterval(() => {
         c -= 1;
         st.mgCd = c;
+        if (c > 0) playCountdownTick();
         render();
         if (c <= 0) {
           clearInterval(st.mgCdInterval);
           st.mgCdInterval = null;
+          stopCountdownTick();
           st.mgPhase = "recall";
           render();
         }
@@ -1109,6 +1048,7 @@
               background: "linear-gradient(135deg, #2c4f7f, #16365f)",
               boxShadow: "0 4px 26px rgba(22,54,95,0.45)",
             },
+            sfx: "next",
             onclick: () => {
               playWhoosh();
               setPhase(PHASES.COLOR_SHIFT);
@@ -1244,6 +1184,7 @@
         "button",
         "font-heading btn-raspberry",
         {
+          sfx: "next",
           onclick: () => setPhase(PHASES.QUIZ),
         },
         ["Yes, let's revisit them!"]
@@ -1724,7 +1665,9 @@
           "button",
           "font-heading btn-raspberry",
           {
+            noClickSfx: true,
             onclick: () => {
+              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
               st.quizStarted = true;
               render();
             },
@@ -1876,8 +1819,10 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 20px rgba(255,46,99,0.3)",
             },
+            noClickSfx: true,
             disabled: st.mgSel.length === 0,
             onclick: () => {
+              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
               const correct = st.mgSel.filter((id) => st.mgTarget.some((t) => t.id === id)).length;
               const s = correct >= 5 ? 4 : correct >= 4 ? 3 : correct >= 3 ? 2 : correct >= 1 ? 1 : 0;
               st.mgScore = { correct, s };
@@ -1994,6 +1939,7 @@
               background: "linear-gradient(135deg, #00D1FF, #7B2FF2)",
               boxShadow: "0 4px 24px rgba(0,209,255,0.3)",
             },
+            sfx: "next",
             onclick: () => {
               st.spPhase = "playing";
               st.spTime = 10;
@@ -2211,7 +2157,9 @@
               background: "linear-gradient(135deg, #00D1FF, #7B2FF2)",
               boxShadow: "0 4px 24px rgba(0,209,255,0.3)",
             },
+            noClickSfx: true,
             onclick: () => {
+              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
               st.quizScores.push(aed);
               st.spResultAed = null;
               st.spPhase = "intro";
@@ -2284,7 +2232,9 @@
               background: "linear-gradient(135deg, #FFD700, #FF2E63)",
               boxShadow: "0 4px 24px rgba(255,215,0,0.3)",
             },
+            noClickSfx: true,
             onclick: () => {
+              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
               if (st.sqWrongTid) clearTimeout(st.sqWrongTid);
               st.sqWrongTid = null;
               st.sqSeq = Array.from({ length: SQ_LEN }, () => SQ_ITEMS[Math.floor(Math.random() * SQ_ITEMS.length)]);
@@ -2468,7 +2418,12 @@
           const next = Math.round(eased * st.budget);
           if (p < 1) {
             if (next !== st.brCount) {
-              if (Math.random() < 0.35) playCoin();
+              const added = Math.max(0, next - st.brCount);
+              for (let i = 0; i < added; i++) {
+                setTimeout(() => {
+                  if (st.phase === PHASES.BUDGET) playCoin();
+                }, i * 55);
+              }
               st.brCount = next;
               render();
             }
@@ -2576,6 +2531,7 @@
           "button",
           "font-heading btn-raspberry",
           {
+          sfx: "next",
             onclick: () => setPhase(PHASES.CURTAIN),
           },
           ["Enter the Baqala"]
@@ -2866,7 +2822,6 @@
     onCleanup(() => stopShopAmbience());
     const remaining = +(st.budget - st.floorSpent).toFixed(2);
     const onPick = (snack) => {
-      playProductPick();
       const already = st.floorPick.find((p) => p.id === snack.id);
       if (already) {
         st.floorPick = st.floorPick.filter((p) => p.id !== snack.id);
@@ -2940,6 +2895,7 @@
             textTransform: "uppercase",
             cursor: "pointer",
           },
+          sfx: "next",
           onclick: () => setPhase(PHASES.FRIDGE),
         },
         ["Go to Fridge"]
@@ -3047,8 +3003,11 @@
             cursor: st.floorPick.length === 0 ? "not-allowed" : "pointer",
             boxShadow: st.floorPick.length > 0 ? "0 4px 20px rgba(45,27,105,0.4)" : "none",
           },
+          sfx: "next",
+          noClickSfx: true,
           disabled: st.floorPick.length === 0,
           onclick: () => {
+            playSoundFromAsset(SFX_PAGE_TURN, 0.48);
             st.picks = st.floorPick.slice();
             setPhase(PHASES.RECEIPT);
           },
@@ -3072,7 +3031,6 @@
     onCleanup(() => stopFridgeHum());
     const remaining = +(st.budget - st.floorSpent).toFixed(2);
     const onPick = (drink) => {
-      playProductPick();
       const already = st.floorPick.find((p) => p.id === drink.id);
       if (already) {
         st.floorPick = st.floorPick.filter((p) => p.id !== drink.id);
@@ -3122,6 +3080,7 @@
     actions.appendChild(
       h("button", "font-heading", {
         style: { padding: "0.45rem 0.8rem", borderRadius: "9999px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.65rem", textTransform: "uppercase", cursor: "pointer" },
+        sfx: "next",
         onclick: () => setPhase(PHASES.FLOOR),
       }, ["Go to Shelves"])
     );
@@ -3190,13 +3149,11 @@
     door.appendChild(canvas);
 
     const handle = h("div", "", {
-      style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: "pointer", opacity: st.fridgeOpen || st.fridgeClr >= 25 ? 1 : 0.75 },
+      style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: "pointer", opacity: 1 },
       onclick: () => {
         playClick();
-        if (st.fridgeOpen || st.fridgeClr >= 25) {
-          st.fridgeOpen = !st.fridgeOpen;
-          render();
-        }
+        st.fridgeOpen = !st.fridgeOpen;
+        render();
       },
     });
     door.appendChild(handle);
@@ -3268,8 +3225,11 @@
             opacity: st.floorPick.length === 0 ? 0.4 : 1,
             cursor: st.floorPick.length === 0 ? "not-allowed" : "pointer",
           },
+          sfx: "next",
+          noClickSfx: true,
           disabled: st.floorPick.length === 0,
           onclick: () => {
+            playSoundFromAsset(SFX_PAGE_TURN, 0.48);
             st.picks = st.floorPick.slice();
             setPhase(PHASES.RECEIPT);
           },
@@ -3336,7 +3296,7 @@
             if (typeof confetti === "function") {
               confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#FF2E63", "#FFD700", "#00D1FF", "#7B2FF2"] });
             }
-            playFound();
+            playSoundFromAsset(SFX_CORRECT_BLING, 0.45);
             render();
           }, 600);
         }
@@ -3557,7 +3517,11 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 24px rgba(255,46,99,0.38)",
             },
-            onclick: () => setPhase(PHASES.ENDING),
+            noClickSfx: true,
+            onclick: () => {
+              playSoundFromAsset(SFX_PLASTIC_CRUNCH, 0.5);
+              setPhase(PHASES.ENDING);
+            },
           },
           ["Continue"]
         )
@@ -3769,6 +3733,7 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 28px rgba(255,46,99,0.35)",
             },
+            sfx: "next",
             onclick: () => advanceFromBag(),
           },
           ["Open the bag"]
@@ -3846,7 +3811,9 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 28px rgba(255,46,99,0.35)",
             },
+            noClickSfx: true,
             onclick: () => {
+              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
               st.endSub = "end";
               render();
             },
@@ -3908,6 +3875,7 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 30px rgba(255,46,99,0.35)",
             },
+            sfx: "next",
             onclick: () => restart(),
           },
           ["Back to Baqalaland"]
