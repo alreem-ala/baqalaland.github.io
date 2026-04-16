@@ -22,15 +22,11 @@
   const BAQLALAND_BLUE = "#00D1FF";
 
   /** Local 2�2 cloud sprite (top-left, top-right, bottom-left, bottom-right) */
-  const CLOUD_IMG =
-    "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/5ee33b51e_image.png";
-  const BALL_IMG =
-    "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/e994aa93e_image.png";
-  const AWNING_IMG =
-    "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/5e2b20ae4_Asset7.png";
+  const CLOUD_IMG = "./assets/ui/cloud.png";
+  const BALL_IMG = "./assets/ui/ball.png";
+  const AWNING_IMG = "./assets/ui/awning.png";
   /** Place your bag PNG at `assets/plastic-bag.png` (same folder as index.html). */
-  const ENDING_BAG_IMG = "./assets/plastic-bag.png";
-  const BASE = "https://media.base44.com/images/public/69cd0dc172e585ffe71e3110/";
+  const ENDING_BAG_IMG = "./assets/ui/plastic-bag.png";
 
   const CLOUDS = [
     { size: 210, top: 6, left: 7, op: 0.88, parallax: 0.52, drift: 22, driftDur: 18 },
@@ -63,25 +59,25 @@
   ];
 
   const SNACKS = [
-    { id: "chipsticks", name: "Chipsticks", price: 0.5, img: BASE + "2dc4fdc49_1.png" },
-    { id: "salad_chips", name: "Salad Chips", price: 1, img: BASE + "52a18141c_2.png" },
-    { id: "square_crisps", name: "Square Crisps", price: 1, img: BASE + "9ae26c1fd_3.png" },
-    { id: "safari_grills", name: "Safari Grills", price: 1, img: BASE + "0968e99e0_4.png" },
-    { id: "mazoon", name: "Mazoon", price: 1.5, img: BASE + "1cc097fc5_5.png" },
-    { id: "majid_crispy", name: "Majid Crispy", price: 0.5, img: BASE + "7ca857f36_6.png" },
-    { id: "super_ring", name: "Super Ring", price: 1, img: BASE + "b7e1a3e31_7.png" },
-    { id: "qrakers", name: "Qrakers", price: 1, img: BASE + "626e806c3_8.png" },
-    { id: "ali_baba", name: "Ali Baba", price: 1, img: BASE + "0eb68be80_9.png" },
-    { id: "raja", name: "Raja", price: 1, img: BASE + "2eb84a7f8_10.png" },
-    { id: "al_mudhish", name: "Al Mudhish", price: 1.5, img: BASE + "745219236_11.png" },
-    { id: "oishi", name: "Oishi Prawns", price: 1, img: BASE + "5ae7f1637_12.png" },
-    { id: "areej", name: "Areej Juice", price: 1, img: BASE + "4cce014cf_13.png" },
-    { id: "rani", name: "Rani Juice", price: 1, img: BASE + "1ae6dc06d_14.png" },
-    { id: "caprisun", name: "Capri-Sun", price: 1.5, img: BASE + "34a5a4045_15.png" },
-    { id: "suntop", name: "Sun Top Mango", price: 0.75, img: BASE + "fdd82f4e1_16.png" },
-    { id: "fruit_shoot", name: "Fruit Shoot", price: 2, img: BASE + "c51d107cf_17.png" },
-    { id: "funfare", name: "Fun Fare", price: 1, img: BASE + "f4b01209f_19.png" },
-    { id: "polo", name: "Polo Mints", price: 0.5, img: BASE + "7e236964f_20.png" },
+    { id: "chipsticks", name: "Chipsticks", price: 0.5, img: "./assets/shelf/chipsticks.png" },
+    { id: "salad_chips", name: "Salad Chips", price: 1, img: "./assets/shelf/salad-chips.png" },
+    { id: "square_crisps", name: "Square Crisps", price: 1, img: "./assets/shelf/square-crisps.png" },
+    { id: "safari_grills", name: "Safari Grills", price: 1, img: "./assets/shelf/safari-grills.png" },
+    { id: "mazoon", name: "Mazoon", price: 1.5, img: "./assets/shelf/mazoon.png" },
+    { id: "majid_crispy", name: "Majid Crispy", price: 0.5, img: "./assets/shelf/majid-crispy.png" },
+    { id: "super_ring", name: "Super Ring", price: 1, img: "./assets/shelf/super-ring.png" },
+    { id: "qrakers", name: "Qrakers", price: 1, img: "./assets/shelf/qrakers.png" },
+    { id: "ali_baba", name: "Ali Baba", price: 1, img: "./assets/shelf/ali-baba.png" },
+    { id: "raja", name: "Raja", price: 1, img: "./assets/shelf/raja.png" },
+    { id: "al_mudhish", name: "Al Mudhish", price: 1.5, img: "./assets/shelf/al-mudhish.png" },
+    { id: "oishi", name: "Oishi Prawns", price: 1, img: "./assets/shelf/oishi-prawns.png" },
+    { id: "areej", name: "Areej Juice", price: 1, img: "./assets/fridge/areej-juice.png" },
+    { id: "rani", name: "Rani Juice", price: 1, img: "./assets/fridge/rani-juice.png" },
+    { id: "caprisun", name: "Capri-Sun", price: 1.5, img: "./assets/fridge/capri-sun.png" },
+    { id: "suntop", name: "Sun Top Mango", price: 0.75, img: "./assets/fridge/sun-top-mango.png" },
+    { id: "fruit_shoot", name: "Fruit Shoot", price: 2, img: "./assets/fridge/fruit-shoot.png" },
+    { id: "funfare", name: "Fun Fare", price: 1, img: "./assets/shelf/fun-fare.png" },
+    { id: "polo", name: "Polo Mints", price: 0.5, img: "./assets/shelf/polo-mints.png" },
     { id: "funtime_fizzy_bottle", name: "Funtime Fizzy Bottle", price: 1, img: "./assets/shelf/funtime-fizzy-bottle.png" },
     { id: "fusen_bubble_gum", name: "Fusen Bubble Gum", price: 0.5, img: "./assets/shelf/fusen-bubble-gum.png" },
     { id: "toffo", name: "Toffo", price: 0.5, img: "./assets/shelf/toffo.png" },
@@ -170,14 +166,18 @@
     "We are glad to share a few of the memories that are instilled in us, and we hope they echoed something familiar in you.",
     "Thank you for spending this visit with us in Baqalaland.",
   ];
-  const SFX_NEXT_PAGE = "./assets/mixkit-select-click-1109.wav";
-  const SFX_SELECT = "./assets/mixkit-cool-interface-click-tone-2568.wav";
-  const SFX_BUDGET_COIN = "./assets/mixkit-arcade-game-jump-coin-216.wav";
-  const SFX_PAGE_TURN = "./assets/freesound_community-pageturn-102978.mp3";
-  const SFX_COUNTDOWN = "./assets/u_lfmkadc0ha-timer_countdown-345137.mp3";
-  const SFX_PLASTIC_CRUNCH = "./assets/freesound_community-plastic-crunch-83779.mp3";
-  const SFX_CORRECT_BLING = "./assets/u_o8xh7gwsrj-correct_answer_toy_bi-bling-476370.mp3";
+  const SFX_NEXT_PAGE = "./assets/audio/select-click.wav";
+  const SFX_SELECT = "./assets/audio/cool-interface-click.wav";
+  const SFX_BUDGET_COIN = "./assets/audio/arcade-coin.wav";
+  const SFX_PAGE_TURN = "./assets/audio/page-turn.mp3";
+  const SFX_COUNTDOWN = "./assets/audio/countdown-tick.mp3";
+  const SFX_PLASTIC_CRUNCH = "./assets/audio/plastic-crunch.mp3";
+  const SFX_CORRECT_BLING = "./assets/audio/correct-bling.mp3";
+  const SFX_FRIDGE_LOOP = "./assets/audio/fridge-ambience-loop.mp3";
+  const SFX_STREET_AMBIENCE = "./assets/audio/street-ambience.mp3";
   let countdownAudio = null;
+  let fridgeLoopAudio = null;
+  let streetAmbienceAudio = null;
   const ENDING_QUESTIONS = [
     "What would you eat first?",
     "Which would you share with your sibling?",
@@ -216,8 +216,56 @@
   }
 
   // Audio (asset-only)
-  function startFridgeHum() {}
-  function stopFridgeHum() {}
+  function startFridgeHum() {
+    if (fridgeLoopAudio) return;
+    fridgeLoopAudio = new Audio(SFX_FRIDGE_LOOP);
+    fridgeLoopAudio.loop = true;
+    fridgeLoopAudio.volume = 0.24;
+    fridgeLoopAudio.play().catch(() => {});
+  }
+  function stopFridgeHum() {
+    if (!fridgeLoopAudio) return;
+    fridgeLoopAudio.pause();
+    fridgeLoopAudio.currentTime = 0;
+    fridgeLoopAudio = null;
+  }
+  function startStreetAmbience() {
+    if (!streetAmbienceAudio) {
+      streetAmbienceAudio = new Audio(SFX_STREET_AMBIENCE);
+      streetAmbienceAudio.loop = true;
+      streetAmbienceAudio.preload = "auto";
+      streetAmbienceAudio.playsInline = true;
+      streetAmbienceAudio.volume = 0.22;
+      streetAmbienceAudio.dataset.started = "0";
+    }
+    if (streetAmbienceAudio.dataset.started === "1" && !streetAmbienceAudio.paused) return;
+    // Try normal autoplay first.
+    streetAmbienceAudio.muted = false;
+    streetAmbienceAudio
+      .play()
+      .then(() => {
+        if (streetAmbienceAudio) streetAmbienceAudio.dataset.started = "1";
+      })
+      .catch(() => {
+        // Fallback: start muted (often allowed), then unmute.
+        if (!streetAmbienceAudio) return;
+        streetAmbienceAudio.muted = true;
+        streetAmbienceAudio.play().then(() => {
+          if (!streetAmbienceAudio) return;
+          streetAmbienceAudio.dataset.started = "1";
+          setTimeout(() => {
+            if (!streetAmbienceAudio) return;
+            streetAmbienceAudio.muted = false;
+          }, 120);
+        }).catch(() => {});
+      });
+  }
+  function stopStreetAmbience() {
+    if (!streetAmbienceAudio) return;
+    streetAmbienceAudio.pause();
+    streetAmbienceAudio.currentTime = 0;
+    streetAmbienceAudio = null;
+  }
   function playGlassWipe() {
     playSelectClick();
   }
@@ -260,7 +308,7 @@
       countdownAudio.currentTime = 0;
     }
     countdownAudio = new Audio(SFX_COUNTDOWN);
-    countdownAudio.volume = 0.28;
+    countdownAudio.volume = 0.08;
     countdownAudio.play().catch(() => {});
   }
   function stopCountdownTick() {
@@ -436,36 +484,36 @@
   }
 
   const MG_ITEMS = [
-    { id: "square_crisps", img: BASE + "9ae26c1fd_3.png", label: "Square Crisps" },
-    { id: "safari_grills", img: BASE + "0968e99e0_4.png", label: "Safari Grills" },
-    { id: "mazoon", img: BASE + "1cc097fc5_5.png", label: "Mazoon" },
-    { id: "majid_crispy", img: BASE + "7ca857f36_6.png", label: "Majid Crispy" },
-    { id: "super_ring", img: BASE + "b7e1a3e31_7.png", label: "Super Ring" },
-    { id: "qrakers", img: BASE + "626e806c3_8.png", label: "Qrakers" },
-    { id: "ali_baba", img: BASE + "0eb68be80_9.png", label: "Ali Baba" },
-    { id: "raja", img: BASE + "2eb84a7f8_10.png", label: "Raja" },
-    { id: "al_mudhish", img: BASE + "745219236_11.png", label: "Al Mudhish" },
-    { id: "oishi", img: BASE + "5ae7f1637_12.png", label: "Oishi Prawns" },
-    { id: "funfare", img: BASE + "f4b01209f_19.png", label: "Fun Fare" },
-    { id: "polo", img: BASE + "7e236964f_20.png", label: "Polo Mints" },
+    { id: "square_crisps", img: "./assets/shelf/square-crisps.png", label: "Square Crisps" },
+    { id: "safari_grills", img: "./assets/shelf/safari-grills.png", label: "Safari Grills" },
+    { id: "mazoon", img: "./assets/shelf/mazoon.png", label: "Mazoon" },
+    { id: "majid_crispy", img: "./assets/shelf/majid-crispy.png", label: "Majid Crispy" },
+    { id: "super_ring", img: "./assets/shelf/super-ring.png", label: "Super Ring" },
+    { id: "qrakers", img: "./assets/shelf/qrakers.png", label: "Qrakers" },
+    { id: "ali_baba", img: "./assets/shelf/ali-baba.png", label: "Ali Baba" },
+    { id: "raja", img: "./assets/shelf/raja.png", label: "Raja" },
+    { id: "al_mudhish", img: "./assets/shelf/al-mudhish.png", label: "Al Mudhish" },
+    { id: "oishi", img: "./assets/shelf/oishi-prawns.png", label: "Oishi Prawns" },
+    { id: "funfare", img: "./assets/shelf/fun-fare.png", label: "Fun Fare" },
+    { id: "polo", img: "./assets/shelf/polo-mints.png", label: "Polo Mints" },
   ];
   const MG_SHOW = 5;
   const MG_SHOW_MS = 7000;
   const SP_TARGETS = [
-    { id: "vimto", img: BASE + "4cce014cf_13.png", label: "Areej Juice", isTarget: true },
-    { id: "pepsi", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", isTarget: false },
-    { id: "laban", img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", isTarget: false },
-    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top", isTarget: false },
-    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun", isTarget: false },
-    { id: "mirinda", img: BASE + "2eb84a7f8_10.png", label: "Raja", isTarget: false },
+    { id: "vimto", img: "./assets/fridge/areej-juice.png", label: "Areej Juice", isTarget: true },
+    { id: "pepsi", img: "./assets/fridge/rani-juice.png", label: "Rani Juice", isTarget: false },
+    { id: "laban", img: "./assets/fridge/fruit-shoot.png", label: "Fruit Shoot", isTarget: false },
+    { id: "suntop", img: "./assets/fridge/sun-top-mango.png", label: "Sun Top", isTarget: false },
+    { id: "caprisun", img: "./assets/fridge/capri-sun.png", label: "Capri-Sun", isTarget: false },
+    { id: "mirinda", img: "./assets/shelf/raja.png", label: "Raja", isTarget: false },
   ];
   const SQ_ITEMS = [
-    { id: "chips", img: BASE + "2dc4fdc49_1.png", label: "Chipsticks", color: "#FF6B35" },
-    { id: "vimto", img: BASE + "4cce014cf_13.png", label: "Areej", color: "#7B2FF2" },
-    { id: "kinder", img: BASE + "f4b01209f_19.png", label: "Fun Fare", color: "#5C3317" },
-    { id: "polo", img: BASE + "7e236964f_20.png", label: "Polo", color: "#00D1FF" },
-    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top", color: "#FFD700" },
-    { id: "candy", img: BASE + "34a5a4045_15.png", label: "Capri-Sun", color: "#FF2E63" },
+    { id: "chips", img: "./assets/shelf/chipsticks.png", label: "Chipsticks", color: "#FF6B35" },
+    { id: "vimto", img: "./assets/fridge/areej-juice.png", label: "Areej", color: "#7B2FF2" },
+    { id: "kinder", img: "./assets/shelf/fun-fare.png", label: "Fun Fare", color: "#5C3317" },
+    { id: "polo", img: "./assets/shelf/polo-mints.png", label: "Polo", color: "#00D1FF" },
+    { id: "suntop", img: "./assets/fridge/sun-top-mango.png", label: "Sun Top", color: "#FFD700" },
+    { id: "candy", img: "./assets/fridge/capri-sun.png", label: "Capri-Sun", color: "#FF2E63" },
   ];
   const SQ_LEN = 5;
   const FRIDGE_DRINKS = [
@@ -477,11 +525,11 @@
     { id: "snickers", img: "./assets/fridge/snickers.png", label: "Snickers", x: "74%", y: "16%" },
     { id: "galaxy", img: "./assets/fridge/galaxy.png", label: "Galaxy", x: "90%", y: "16%" },
     // Middle row (drinks)
-    { id: "areej", img: BASE + "4cce014cf_13.png", label: "Areej", x: "10%", y: "50%" },
-    { id: "fruit_shoot", img: BASE + "c51d107cf_17.png", label: "Fruit Shoot", x: "26%", y: "50%" },
-    { id: "rani", img: BASE + "1ae6dc06d_14.png", label: "Rani Juice", x: "42%", y: "50%" },
-    { id: "suntop", img: BASE + "fdd82f4e1_16.png", label: "Sun Top", x: "58%", y: "50%" },
-    { id: "caprisun", img: BASE + "34a5a4045_15.png", label: "Capri-Sun", x: "74%", y: "50%" },
+    { id: "areej", img: "./assets/fridge/areej-juice.png", label: "Areej", x: "10%", y: "50%" },
+    { id: "fruit_shoot", img: "./assets/fridge/fruit-shoot.png", label: "Fruit Shoot", x: "26%", y: "50%" },
+    { id: "rani", img: "./assets/fridge/rani-juice.png", label: "Rani Juice", x: "42%", y: "50%" },
+    { id: "suntop", img: "./assets/fridge/sun-top-mango.png", label: "Sun Top", x: "58%", y: "50%" },
+    { id: "caprisun", img: "./assets/fridge/capri-sun.png", label: "Capri-Sun", x: "74%", y: "50%" },
     { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "90%", y: "50%" },
     // Bottom row (drinks)
     { id: "star_mango", img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "10%", y: "82%" },
@@ -512,15 +560,15 @@
     unikai_ice_cream_sandwich: 1.25,
   };
   const CANDY_SHELF_IMGS = [
-    BASE + "2dc4fdc49_1.png",
-    BASE + "52a18141c_2.png",
-    BASE + "9ae26c1fd_3.png",
-    BASE + "0968e99e0_4.png",
-    BASE + "7ca857f36_6.png",
-    BASE + "b7e1a3e31_7.png",
-    BASE + "626e806c3_8.png",
-    BASE + "0eb68be80_9.png",
-    BASE + "5ae7f1637_12.png",
+    "./assets/shelf/chipsticks.png",
+    "./assets/shelf/salad-chips.png",
+    "./assets/shelf/square-crisps.png",
+    "./assets/shelf/safari-grills.png",
+    "./assets/shelf/majid-crispy.png",
+    "./assets/shelf/super-ring.png",
+    "./assets/shelf/qrakers.png",
+    "./assets/shelf/ali-baba.png",
+    "./assets/shelf/oishi-prawns.png",
     "./assets/shelf/chips-oman.png",
     "./assets/shelf/papy-snacks.png",
   ];
@@ -848,7 +896,7 @@
     const introOpacity = phase2;
     const awningTop = Math.max(-18, 100 - p * 118);
     const cloudShift = p * 260;
-    const wrap = h("div", "", { style: { position: "fixed", inset: 0, overflow: "hidden" } });
+    const wrap = h("div", "", { style: { position: "fixed", inset: 0, overflow: "hidden" }, onmouseenter: () => startStreetAmbience() });
     wrap.appendChild(
       h("div", "", {
         style: {
@@ -1050,6 +1098,7 @@
             },
             sfx: "next",
             onclick: () => {
+              stopStreetAmbience();
               playWhoosh();
               setPhase(PHASES.COLOR_SHIFT);
             },
@@ -1080,29 +1129,41 @@
     wrap.appendChild(prog);
     const onWheel = (e) => {
       e.preventDefault();
+      startStreetAmbience();
       st.entranceP = Math.min(1, Math.max(0, st.entranceP + e.deltaY / 700));
       if (st.entranceP >= 1) st.entranceShowCTA = true;
       render();
     };
     let touchY = 0;
     const onTouchStart = (e) => {
+      startStreetAmbience();
       touchY = e.touches[0].clientY;
     };
     const onTouchMove = (e) => {
       e.preventDefault();
+      startStreetAmbience();
       const dy = (touchY - e.touches[0].clientY) / 350;
       touchY = e.touches[0].clientY;
       st.entranceP = Math.min(1, Math.max(0, st.entranceP + dy));
       if (st.entranceP >= 1) st.entranceShowCTA = true;
       render();
     };
+    const onPointerDown = () => startStreetAmbience();
+    const onMouseMove = () => startStreetAmbience();
+    const onKeyDown = () => startStreetAmbience();
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: false });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
     onCleanup(() => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("keydown", onKeyDown);
     });
     return wrap;
   }
@@ -1667,7 +1728,7 @@
           {
             noClickSfx: true,
             onclick: () => {
-              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
+              playSoundFromAsset("./assets/audio/select-click.wav", 0.42);
               st.quizStarted = true;
               render();
             },
@@ -1822,7 +1883,7 @@
             noClickSfx: true,
             disabled: st.mgSel.length === 0,
             onclick: () => {
-              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
+              playSoundFromAsset("./assets/audio/select-click.wav", 0.42);
               const correct = st.mgSel.filter((id) => st.mgTarget.some((t) => t.id === id)).length;
               const s = correct >= 5 ? 4 : correct >= 4 ? 3 : correct >= 3 ? 2 : correct >= 1 ? 1 : 0;
               st.mgScore = { correct, s };
@@ -2159,7 +2220,7 @@
             },
             noClickSfx: true,
             onclick: () => {
-              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
+              playSoundFromAsset("./assets/audio/select-click.wav", 0.42);
               st.quizScores.push(aed);
               st.spResultAed = null;
               st.spPhase = "intro";
@@ -2234,7 +2295,7 @@
             },
             noClickSfx: true,
             onclick: () => {
-              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
+              playSoundFromAsset("./assets/audio/select-click.wav", 0.42);
               if (st.sqWrongTid) clearTimeout(st.sqWrongTid);
               st.sqWrongTid = null;
               st.sqSeq = Array.from({ length: SQ_LEN }, () => SQ_ITEMS[Math.floor(Math.random() * SQ_ITEMS.length)]);
@@ -2895,7 +2956,7 @@
             textTransform: "uppercase",
             cursor: "pointer",
           },
-          sfx: "next",
+          noClickSfx: true,
           onclick: () => setPhase(PHASES.FRIDGE),
         },
         ["Go to Fridge"]
@@ -3027,7 +3088,8 @@
   }
 
   function renderFridgeShop() {
-    startFridgeHum();
+    if (st.fridgeOpen) startFridgeHum();
+    else stopFridgeHum();
     onCleanup(() => stopFridgeHum());
     const remaining = +(st.budget - st.floorSpent).toFixed(2);
     const onPick = (drink) => {
@@ -3080,7 +3142,7 @@
     actions.appendChild(
       h("button", "font-heading", {
         style: { padding: "0.45rem 0.8rem", borderRadius: "9999px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.65rem", textTransform: "uppercase", cursor: "pointer" },
-        sfx: "next",
+        noClickSfx: true,
         onclick: () => setPhase(PHASES.FLOOR),
       }, ["Go to Shelves"])
     );
@@ -3151,7 +3213,6 @@
     const handle = h("div", "", {
       style: { position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", zIndex: 20, width: "8px", height: "74px", borderRadius: "4px", background: "linear-gradient(180deg, #bbb 0%, #666 100%)", cursor: "pointer", opacity: 1 },
       onclick: () => {
-        playClick();
         st.fridgeOpen = !st.fridgeOpen;
         render();
       },
@@ -3733,8 +3794,11 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 28px rgba(255,46,99,0.35)",
             },
-            sfx: "next",
-            onclick: () => advanceFromBag(),
+            noClickSfx: true,
+            onclick: () => {
+              playSoundFromAsset(SFX_PLASTIC_CRUNCH, 0.5);
+              advanceFromBag();
+            },
           },
           ["Open the bag"]
         )
@@ -3813,7 +3877,7 @@
             },
             noClickSfx: true,
             onclick: () => {
-              playSoundFromAsset("./assets/mixkit-select-click-1109.wav", 0.42);
+              playSoundFromAsset("./assets/audio/select-click.wav", 0.42);
               st.endSub = "end";
               render();
             },
@@ -3875,8 +3939,11 @@
               background: "linear-gradient(135deg, #FF2E63, #7B2FF2)",
               boxShadow: "0 4px 30px rgba(255,46,99,0.35)",
             },
-            sfx: "next",
-            onclick: () => restart(),
+            noClickSfx: true,
+            onclick: () => {
+              startStreetAmbience();
+              restart();
+            },
           },
           ["Back to Baqalaland"]
         )
