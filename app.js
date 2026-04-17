@@ -60,7 +60,7 @@
 
   const SNACKS = [
     { id: "chipsticks", name: "Chipsticks", price: 0.5, img: "./assets/shelf/chipsticks.png" },
-    { id: "salad_chips", name: "Salad Chips", price: 1, img: "./assets/shelf/salad-chips.png" },
+    { id: "salad_chips", name: "Salad Chips", price: 1, img: "./assets/shelf/salad.png" },
     { id: "square_crisps", name: "Square Crisps", price: 1, img: "./assets/shelf/square-crisps.png" },
     { id: "safari_grills", name: "Safari Grills", price: 1, img: "./assets/shelf/safari-grills.png" },
     { id: "mazoon", name: "Mazoon", price: 1.5, img: "./assets/shelf/mazoon.png" },
@@ -71,11 +71,11 @@
     { id: "raja", name: "Raja", price: 1, img: "./assets/shelf/raja.png" },
     { id: "al_mudhish", name: "Al Mudhish", price: 1.5, img: "./assets/shelf/al-mudhish.png" },
     { id: "oishi", name: "Oishi Prawns", price: 1, img: "./assets/shelf/oishi-prawns.png" },
-    { id: "areej", name: "Areej Juice", price: 1, img: "./assets/fridge/areej-juice.png" },
-    { id: "rani", name: "Rani Juice", price: 1, img: "./assets/fridge/rani-juice.png" },
-    { id: "caprisun", name: "Capri-Sun", price: 1.5, img: "./assets/fridge/capri-sun.png" },
-    { id: "suntop", name: "Sun Top Mango", price: 0.75, img: "./assets/fridge/sun-top-mango.png" },
-    { id: "fruit_shoot", name: "Fruit Shoot", price: 2, img: "./assets/fridge/fruit-shoot.png" },
+    { id: "areej", name: "Areej Juice", price: 1, img: "./assets/fridge/areej.png" },
+    { id: "rani", name: "Rani Juice", price: 1, img: "./assets/fridge/rani.png" },
+    { id: "caprisun", name: "Capri-Sun", price: 1.5, img: "./assets/fridge/caprisun.png" },
+    { id: "suntop", name: "Sun Top Mango", price: 0.75, img: "./assets/fridge/suntop.png" },
+    { id: "fruit_shoot", name: "Fruit Shoot", price: 2, img: "./assets/fridge/fruitshoot.png" },
     { id: "funfare", name: "Fun Fare", price: 1, img: "./assets/shelf/fun-fare.png" },
     { id: "polo", name: "Polo Mints", price: 0.5, img: "./assets/shelf/polo-mints.png" },
     { id: "funtime_fizzy_bottle", name: "Funtime Fizzy Bottle", price: 1, img: "./assets/shelf/funtime-fizzy-bottle.png" },
@@ -500,20 +500,20 @@
   const MG_SHOW = 5;
   const MG_SHOW_MS = 7000;
   const SP_TARGETS = [
-    { id: "vimto", img: "./assets/fridge/areej-juice.png", label: "Areej Juice", isTarget: true },
-    { id: "pepsi", img: "./assets/fridge/rani-juice.png", label: "Rani Juice", isTarget: false },
-    { id: "laban", img: "./assets/fridge/fruit-shoot.png", label: "Fruit Shoot", isTarget: false },
-    { id: "suntop", img: "./assets/fridge/sun-top-mango.png", label: "Sun Top", isTarget: false },
-    { id: "caprisun", img: "./assets/fridge/capri-sun.png", label: "Capri-Sun", isTarget: false },
+    { id: "vimto", img: "./assets/fridge/areej.png", label: "Areej Juice", isTarget: true },
+    { id: "pepsi", img: "./assets/fridge/rani.png", label: "Rani Juice", isTarget: false },
+    { id: "laban", img: "./assets/fridge/fruitshoot.png", label: "Fruit Shoot", isTarget: false },
+    { id: "suntop", img: "./assets/fridge/suntop.png", label: "Sun Top", isTarget: false },
+    { id: "caprisun", img: "./assets/fridge/caprisun.png", label: "Capri-Sun", isTarget: false },
     { id: "mirinda", img: "./assets/shelf/raja.png", label: "Raja", isTarget: false },
   ];
   const SQ_ITEMS = [
     { id: "chips", img: "./assets/shelf/chipsticks.png", label: "Chipsticks", color: "#FF6B35" },
-    { id: "vimto", img: "./assets/fridge/areej-juice.png", label: "Areej", color: "#7B2FF2" },
+    { id: "vimto", img: "./assets/fridge/areej.png", label: "Areej", color: "#7B2FF2" },
     { id: "kinder", img: "./assets/shelf/fun-fare.png", label: "Fun Fare", color: "#5C3317" },
     { id: "polo", img: "./assets/shelf/polo-mints.png", label: "Polo", color: "#00D1FF" },
-    { id: "suntop", img: "./assets/fridge/sun-top-mango.png", label: "Sun Top", color: "#FFD700" },
-    { id: "candy", img: "./assets/fridge/capri-sun.png", label: "Capri-Sun", color: "#FF2E63" },
+    { id: "suntop", img: "./assets/fridge/suntop.png", label: "Sun Top", color: "#FFD700" },
+    { id: "candy", img: "./assets/fridge/caprisun.png", label: "Capri-Sun", color: "#FF2E63" },
   ];
   const SQ_LEN = 5;
   const FRIDGE_DRINKS = [
@@ -525,11 +525,11 @@
     { id: "snickers", img: "./assets/fridge/snickers.png", label: "Snickers", x: "74%", y: "16%" },
     { id: "galaxy", img: "./assets/fridge/galaxy.png", label: "Galaxy", x: "90%", y: "16%" },
     // Middle row (drinks)
-    { id: "areej", img: "./assets/fridge/areej-juice.png", label: "Areej", x: "10%", y: "50%" },
-    { id: "fruit_shoot", img: "./assets/fridge/fruit-shoot.png", label: "Fruit Shoot", x: "26%", y: "50%" },
-    { id: "rani", img: "./assets/fridge/rani-juice.png", label: "Rani Juice", x: "42%", y: "50%" },
-    { id: "suntop", img: "./assets/fridge/sun-top-mango.png", label: "Sun Top", x: "58%", y: "50%" },
-    { id: "caprisun", img: "./assets/fridge/capri-sun.png", label: "Capri-Sun", x: "74%", y: "50%" },
+    { id: "areej", img: "./assets/fridge/areej.png", label: "Areej", x: "10%", y: "50%" },
+    { id: "fruit_shoot", img: "./assets/fridge/fruitshoot.png", label: "Fruit Shoot", x: "26%", y: "50%" },
+    { id: "rani", img: "./assets/fridge/rani.png", label: "Rani Juice", x: "42%", y: "50%" },
+    { id: "suntop", img: "./assets/fridge/suntop.png", label: "Sun Top", x: "58%", y: "50%" },
+    { id: "caprisun", img: "./assets/fridge/caprisun.png", label: "Capri-Sun", x: "74%", y: "50%" },
     { id: "canada_dry", img: "./assets/fridge/canada-dry.png", label: "Canada Dry", x: "90%", y: "50%" },
     // Bottom row (drinks)
     { id: "star_mango", img: "./assets/fridge/star-mango.png", label: "Star Mango", x: "10%", y: "82%" },
@@ -561,7 +561,7 @@
   };
   const CANDY_SHELF_IMGS = [
     "./assets/shelf/chipsticks.png",
-    "./assets/shelf/salad-chips.png",
+    "./assets/shelf/salad.png",
     "./assets/shelf/square-crisps.png",
     "./assets/shelf/safari-grills.png",
     "./assets/shelf/majid-crispy.png",
@@ -896,7 +896,10 @@
     const introOpacity = phase2;
     const awningTop = Math.max(-18, 100 - p * 118);
     const cloudShift = p * 260;
-    const wrap = h("div", "", { style: { position: "fixed", inset: 0, overflow: "hidden" }, onmouseenter: () => startStreetAmbience() });
+    const wrap = h("div", "", {
+      style: { position: "fixed", inset: 0, overflow: "hidden", touchAction: "none" },
+      onmouseenter: () => startStreetAmbience(),
+    });
     wrap.appendChild(
       h("div", "", {
         style: {
@@ -1127,12 +1130,15 @@
       })
     );
     wrap.appendChild(prog);
+    const updateEntranceProgress = (delta) => {
+      st.entranceP = Math.min(1, Math.max(0, st.entranceP + delta));
+      if (st.entranceP >= 1) st.entranceShowCTA = true;
+      render();
+    };
     const onWheel = (e) => {
       e.preventDefault();
       startStreetAmbience();
-      st.entranceP = Math.min(1, Math.max(0, st.entranceP + e.deltaY / 700));
-      if (st.entranceP >= 1) st.entranceShowCTA = true;
-      render();
+      updateEntranceProgress(e.deltaY / 700);
     };
     let touchY = 0;
     const onTouchStart = (e) => {
@@ -1142,19 +1148,34 @@
     const onTouchMove = (e) => {
       e.preventDefault();
       startStreetAmbience();
-      const dy = (touchY - e.touches[0].clientY) / 350;
+      const dy = (touchY - e.touches[0].clientY) / 260;
       touchY = e.touches[0].clientY;
-      st.entranceP = Math.min(1, Math.max(0, st.entranceP + dy));
-      if (st.entranceP >= 1) st.entranceShowCTA = true;
-      render();
+      updateEntranceProgress(dy);
     };
-    const onPointerDown = () => startStreetAmbience();
+    let pointerY = null;
+    const onPointerDown = (e) => {
+      startStreetAmbience();
+      if (e.pointerType === "mouse") return;
+      pointerY = e.clientY;
+    };
+    const onPointerMove = (e) => {
+      if (pointerY == null) return;
+      const dy = (pointerY - e.clientY) / 260;
+      pointerY = e.clientY;
+      updateEntranceProgress(dy);
+    };
+    const onPointerUp = () => {
+      pointerY = null;
+    };
     const onMouseMove = () => startStreetAmbience();
     const onKeyDown = () => startStreetAmbience();
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: false });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     onCleanup(() => {
@@ -1162,6 +1183,9 @@
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("keydown", onKeyDown);
     });
@@ -1909,8 +1933,8 @@
         )
       );
     } else if (st.mgPhase === "result" && st.mgScore) {
-      const emoji = st.mgScore.s === 3 ? "\u{1F9E0}" : st.mgScore.s === 2 ? "\u{1F605}" : "\u{1F636}";
-      inner.appendChild(h("div", "", { style: { fontSize: "4rem", textAlign: "center", marginBottom: "1rem" } }, [emoji]));
+      const emoji = st.mgScore.s === 4 ? "\u{1F31F}" : "";
+      if (emoji) inner.appendChild(h("div", "", { style: { fontSize: "4rem", textAlign: "center", marginBottom: "1rem" } }, [emoji]));
       inner.appendChild(
         h("h2", "font-heading", { style: { fontWeight: 700, fontSize: "1.5rem", color: "#fff", textAlign: "center", textTransform: "uppercase", marginBottom: "0.5rem" } }, [`${st.mgScore.correct}/5 correct`])
       );
